@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planificador de comidas</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --panel: #ffffff;
+    --border: #dcdcdc;
+    --text: #1a1a1a;
+    --text-muted: #6b6b6b;
+    --accent: #2f6f4f;
+    --accent-bg: #eaf2ee;
+    --danger: #b3441e;
+    --radius: 6px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+    padding: 12px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 19px;
+    font-weight: 600;
+    margin: 4px 0 14px;
+  }
+  h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin: 20px 0 8px;
+    text-transform: none;
+  }
+  .week-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px 8px;
+    margin-bottom: 8px;
+  }
+  .week-nav button {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--text);
+  }
+  .week-nav .week-label {
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    flex: 1;
+  }
+  .day-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .day-header {
+    padding: 8px 12px;
+    font-weight: 600;
+    font-size: 14px;
+    background: #f2f2f2;
+    border-bottom: 1px solid var(--border);
+  }
+  .slot-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    gap: 8px;
+  }
+  .slot-row:last-child { border-bottom: none; }
+  .slot-label {
+    width: 76px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .slot-select {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #fff;
+    color: var(--text);
+    font-size: 14px;
+  }
+  .meal-list {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px;
+  }
+  .meal-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 4px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+  }
+  .meal-item:last-child { border-bottom: none; }
+  .meal-item button {
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-size: 13px;
+    padding: 2px 6px;
+    cursor: pointer;
+  }
+  .add-meal-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .add-meal-row input {
+    flex: 1;
+    padding: 7px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+  }
+  .btn {
+    padding: 7px 12px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    border-radius: var(--radius);
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-muted);
+    border-color: var(--border);
+    font-size: 12px;
+    padding: 6px 10px;
+    margin-top: 16px;
+  }
+  .empty-note {
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 6px 4px;
+  }
+  .status {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 14px;
+    min-height: 16px;
+  }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 14px;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 8px 4px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .week-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12px;
+  }
+  .week-table th, .week-table td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  .week-table th {
+    background: #f2f2f2;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+  }
+  .week-table th:first-child, .week-table td:first-child {
+    position: sticky;
+    left: 0;
+    background: #f2f2f2;
+    font-weight: 600;
+    z-index: 1;
+  }
+  .week-table td.empty-cell {
+    color: var(--text-muted);
+  }
+  .print-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px 10px;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+  }
+  @media print {
+    .tabs, .meal-list, .add-meal-row, .btn, .btn-secondary, .status,
+    #viewPlan, .week-nav button, .print-btn {
+      display: none !important;
+    }
+    #viewTable { display: block !important; }
+    .week-nav {
+      border: none;
+      justify-content: center;
+      padding: 0 0 8px;
+    }
+    .week-nav .week-label { font-size: 16px; }
+    .table-scroll { overflow: visible; border: none; }
+    .week-table { font-size: 13px; }
+    .week-table th, .week-table td { white-space: normal; }
+    body { max-width: none; padding: 0; }
+  }
+</style>
+</head>
+<body>
+
+  <h1>Planificador de comidas</h1>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tabPlanBtn">Planificar</button>
+    <button class="tab-btn" id="tabViewBtn">Vista semanal</button>
+    <button class="print-btn" id="printBtn" title="Imprimir / PDF">🖨️</button>
+  </div>
+
+  <div class="week-nav">
+    <button id="prevWeekBtn">←</button>
+    <div class="week-label" id="weekLabel"></div>
+    <button id="nextWeekBtn">→</button>
+  </div>
+
+  <div id="viewPlan">
+    <h2>Lista de comidas</h2>
+    <div class="meal-list">
+      <div id="mealItems"></div>
+      <div class="add-meal-row">
+        <input type="text" id="newMealInput" placeholder="Añadir comida (ej. Lentejas)">
+        <button class="btn" id="addMealBtn">Añadir</button>
+      </div>
+    </div>
+
+    <h2>Semana</h2>
+    <div id="weekGrid"></div>
+
+    <button class="btn btn-secondary" id="resetBtn">Vaciar esta semana</button>
+  </div>
+
+  <div id="viewTable" style="display:none;">
+    <h2>Semana de un vistazo</h2>
+    <div class="table-scroll">
+      <table class="week-table" id="weekTable"></table>
+    </div>
+  </div>
+
+  <div class="status" id="statusMsg"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+  // ====== PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE (paso 4 de las instrucciones) ======
+  const firebaseConfig = {
+    apiKey: "TU_API_KEY",
+    authDomain: "TU_PROYECTO.firebaseapp.com",
+    databaseURL: "https://TU_PROYECTO-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "TU_PROYECTO",
+    storageBucket: "TU_PROYECTO.appspot.com",
+    messagingSenderId: "TU_SENDER_ID",
+    appId: "TU_APP_ID"
+  };
+  // ====================================================================================
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const dbRef = db.ref('planificador-comidas');
+</script>
+<script>
+  const DAYS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  const SLOTS = ['Desayuno','Almuerzo','Cena'];
+  const MONTHS = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+  // state.meals: lista global de comidas, persiste siempre.
+  // state.weeks: { "YYYY-MM-DD" (lunes de esa semana): { Lunes: {Desayuno:'',...}, ... } }
+  let state = { meals: [], weeks: {} };
+  let currentWeekStart = getMondayISO(new Date());
+
+  function getMondayISO(date) {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = (day === 0 ? -6 : 1) - day;
+    d.setDate(d.getDate() + diff);
+    d.setHours(0,0,0,0);
+    return isoDateStr(d);
+  }
+
+  function isoDateStr(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function addDaysISO(iso, days) {
+    const d = new Date(iso + 'T00:00:00');
+    d.setDate(d.getDate() + days);
+    return isoDateStr(d);
+  }
+
+  function emptyAssignments() {
+    const a = {};
+    DAYS.forEach(d => { a[d] = {}; SLOTS.forEach(s => a[d][s] = ''); });
+    return a;
+  }
+
+  function ensureWeek(iso) {
+    if (!state.weeks[iso]) {
+      state.weeks[iso] = emptyAssignments();
+    } else {
+      DAYS.forEach(d => {
+        if (!state.weeks[iso][d]) state.weeks[iso][d] = {};
+        SLOTS.forEach(s => { if (!(s in state.weeks[iso][d])) state.weeks[iso][d][s] = ''; });
+      });
+    }
+  }
+
+  function currentAssignments() {
+    ensureWeek(currentWeekStart);
+    return state.weeks[currentWeekStart];
+  }
+
+  async function loadState() {
+    try {
+      const snapshot = await dbRef.once('value');
+      const parsed = snapshot.val();
+      if (parsed) {
+        state.meals = Array.isArray(parsed.meals) ? parsed.meals : [];
+        state.weeks = parsed.weeks && typeof parsed.weeks === 'object' ? parsed.weeks : {};
+      }
+    } catch (e) {
+      showStatus('No se pudo conectar con la base de datos', false);
+    }
+    ensureWeek(currentWeekStart);
+  }
+
+  let isSavingLocally = false;
+  async function saveState(msg) {
+    try {
+      isSavingLocally = true;
+      await dbRef.set(state);
+      showStatus(msg || 'Guardado', true);
+    } catch (e) {
+      showStatus('No se pudo guardar', false);
+    } finally {
+      setTimeout(() => { isSavingLocally = false; }, 300);
+    }
+  }
+
+  // Escucha cambios de las otras personas en tiempo real y refresca la vista.
+  dbRef.on('value', (snapshot) => {
+    if (isSavingLocally) return;
+    const parsed = snapshot.val();
+    if (!parsed) return;
+    state.meals = Array.isArray(parsed.meals) ? parsed.meals : [];
+    state.weeks = parsed.weeks && typeof parsed.weeks === 'object' ? parsed.weeks : {};
+    ensureWeek(currentWeekStart);
+    renderAll();
+  });
+
+  let statusTimer = null;
+  function showStatus(text, ok) {
+    const el = document.getElementById('statusMsg');
+    el.textContent = text;
+    el.style.color = ok === false ? '#b3441e' : '#6b6b6b';
+    clearTimeout(statusTimer);
+    statusTimer = setTimeout(() => { el.textContent = ''; }, 1500);
+  }
+
+  function formatWeekLabel(mondayIso) {
+    const monday = new Date(mondayIso + 'T00:00:00');
+    const sundayIso = addDaysISO(mondayIso, 6);
+    const sunday = new Date(sundayIso + 'T00:00:00');
+    const sameMonth = monday.getMonth() === sunday.getMonth();
+    const start = `${monday.getDate()} ${MONTHS[monday.getMonth()]}`;
+    const end = sameMonth ? `${sunday.getDate()} ${MONTHS[sunday.getMonth()]}` : `${sunday.getDate()} ${MONTHS[sunday.getMonth()]}`;
+    return `${start} – ${end}`;
+  }
+
+  function dayDateLabel(dayIndex) {
+    const iso = addDaysISO(currentWeekStart, dayIndex);
+    const d = new Date(iso + 'T00:00:00');
+    return `${DAYS[dayIndex]} ${d.getDate()}`;
+  }
+
+  function renderWeekLabel() {
+    document.getElementById('weekLabel').textContent = formatWeekLabel(currentWeekStart);
+  }
+
+  function renderMealList() {
+    const container = document.getElementById('mealItems');
+    container.innerHTML = '';
+    if (state.meals.length === 0) {
+      container.innerHTML = '<div class="empty-note">Sin comidas todavía. Añade alguna abajo.</div>';
+      return;
+    }
+    state.meals.forEach((meal, idx) => {
+      const row = document.createElement('div');
+      row.className = 'meal-item';
+      const span = document.createElement('span');
+      span.textContent = meal;
+      const btn = document.createElement('button');
+      btn.textContent = 'Quitar';
+      btn.onclick = () => removeMeal(idx);
+      row.appendChild(span);
+      row.appendChild(btn);
+      container.appendChild(row);
+    });
+  }
+
+  function renderWeekGrid() {
+    const assignments = currentAssignments();
+    const grid = document.getElementById('weekGrid');
+    grid.innerHTML = '';
+    DAYS.forEach((day, dayIdx) => {
+      const card = document.createElement('div');
+      card.className = 'day-card';
+
+      const header = document.createElement('div');
+      header.className = 'day-header';
+      header.textContent = dayDateLabel(dayIdx);
+      card.appendChild(header);
+
+      SLOTS.forEach(slot => {
+        const row = document.createElement('div');
+        row.className = 'slot-row';
+
+        const label = document.createElement('div');
+        label.className = 'slot-label';
+        label.textContent = slot;
+
+        const select = document.createElement('select');
+        select.className = 'slot-select';
+        const noneOpt = document.createElement('option');
+        noneOpt.value = '';
+        noneOpt.textContent = '—';
+        select.appendChild(noneOpt);
+        state.meals.forEach(meal => {
+          const opt = document.createElement('option');
+          opt.value = meal;
+          opt.textContent = meal;
+          if (assignments[day][slot] === meal) opt.selected = true;
+          select.appendChild(opt);
+        });
+        select.onchange = () => {
+          assignments[day][slot] = select.value;
+          renderWeekTable();
+          saveState('Guardado');
+        };
+
+        row.appendChild(label);
+        row.appendChild(select);
+        card.appendChild(row);
+      });
+
+      grid.appendChild(card);
+    });
+  }
+
+  function renderWeekTable() {
+    const assignments = currentAssignments();
+    const table = document.getElementById('weekTable');
+    let html = '<tr><th>Comida</th>';
+    DAYS.forEach((day, idx) => {
+      const iso = addDaysISO(currentWeekStart, idx);
+      const d = new Date(iso + 'T00:00:00');
+      html += `<th>${day.slice(0,3)} ${d.getDate()}</th>`;
+    });
+    html += '</tr>';
+    SLOTS.forEach(slot => {
+      html += `<tr><td>${slot}</td>`;
+      DAYS.forEach(day => {
+        const val = assignments[day][slot];
+        if (val) {
+          html += `<td>${escapeHtml(val)}</td>`;
+        } else {
+          html += `<td class="empty-cell">—</td>`;
+        }
+      });
+      html += '</tr>';
+    });
+    table.innerHTML = html;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function renderAll() {
+    renderWeekLabel();
+    renderMealList();
+    renderWeekGrid();
+    renderWeekTable();
+  }
+
+  document.getElementById('tabPlanBtn').onclick = () => switchTab('plan');
+  document.getElementById('tabViewBtn').onclick = () => switchTab('table');
+
+  function switchTab(which) {
+    const planBtn = document.getElementById('tabPlanBtn');
+    const viewBtn = document.getElementById('tabViewBtn');
+    const planView = document.getElementById('viewPlan');
+    const tableView = document.getElementById('viewTable');
+    if (which === 'plan') {
+      planBtn.classList.add('active');
+      viewBtn.classList.remove('active');
+      planView.style.display = '';
+      tableView.style.display = 'none';
+    } else {
+      planBtn.classList.remove('active');
+      viewBtn.classList.add('active');
+      planView.style.display = 'none';
+      tableView.style.display = '';
+      renderWeekTable();
+    }
+  }
+
+  function addMeal() {
+    const input = document.getElementById('newMealInput');
+    const val = input.value.trim();
+    if (!val) return;
+    if (state.meals.includes(val)) {
+      showStatus('Ya está en la lista', false);
+      return;
+    }
+    state.meals.push(val);
+    input.value = '';
+    renderAll();
+    saveState('Añadido');
+  }
+
+  function removeMeal(idx) {
+    const meal = state.meals[idx];
+    state.meals.splice(idx, 1);
+    // Quita la comida de todas las semanas guardadas, no solo la actual.
+    Object.keys(state.weeks).forEach(weekIso => {
+      DAYS.forEach(day => {
+        SLOTS.forEach(slot => {
+          if (state.weeks[weekIso][day][slot] === meal) state.weeks[weekIso][day][slot] = '';
+        });
+      });
+    });
+    renderAll();
+    saveState('Quitado');
+  }
+
+  function resetWeek() {
+    state.weeks[currentWeekStart] = emptyAssignments();
+    renderAll();
+    saveState('Semana vaciada');
+  }
+
+  function goToWeek(offsetDays) {
+    currentWeekStart = addDaysISO(currentWeekStart, offsetDays);
+    ensureWeek(currentWeekStart);
+    renderAll();
+    saveState();
+  }
+
+  document.getElementById('addMealBtn').onclick = addMeal;
+  document.getElementById('newMealInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addMeal();
+  });
+  document.getElementById('resetBtn').onclick = resetWeek;
+  document.getElementById('prevWeekBtn').onclick = () => goToWeek(-7);
+  document.getElementById('nextWeekBtn').onclick = () => goToWeek(7);
+  document.getElementById('printBtn').onclick = () => {
+    renderWeekTable();
+    window.print();
+  };
+
+  (async function init() {
+    await loadState();
+    renderAll();
+  })();
+</script>
+
+</body>
+</html>
