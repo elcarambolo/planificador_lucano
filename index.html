@@ -4,298 +4,425 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Planificador de comidas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
 <style>
+  /* ===== Tokens Material 3 (esquema verde) ===== */
   :root {
-    --bg: #fafafa; --panel: #ffffff; --border: #dcdcdc; --line: #eeeeee; --head: #f2f2f2;
-    --input: #ffffff; --text: #1a1a1a; --muted: #6b6b6b; --accent: #2f6f4f; --accent-bg: #eaf2ee;
-    --on-accent: #ffffff; --danger: #b3441e; --star: #c99700; --radius: 6px;
+    --primary: #2e6b4f; --on-primary: #ffffff; --primary-container: #b1f1cf; --on-primary-container: #002113;
+    --secondary-container: #cfe9d9; --on-secondary-container: #0b1f15;
+    --surface: #f6fbf5; --surface-low: #f0f5ef; --surface-container: #eaefe9; --surface-high: #e5eae4; --surface-highest: #dfe4de;
+    --on-surface: #171d19; --on-surface-variant: #404943; --outline: #707973; --outline-variant: #c0c9c1;
+    --inverse-surface: #2c322e; --inverse-on-surface: #edf2ec; --error: #ba1a1a; --star: #b58500;
+    --scrim: rgba(0,0,0,0.32);
     color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #121412; --panel: #1c1f1d; --border: #353b37; --line: #2a2f2c; --head: #242926;
-      --input: #151816; --text: #e8ebe9; --muted: #9aa39e; --accent: #6fbf96; --accent-bg: #22352b;
-      --on-accent: #0e1a14; --danger: #e58663; --star: #f0c040;
+      --primary: #95d5b3; --on-primary: #003824; --primary-container: #105239; --on-primary-container: #b1f1cf;
+      --secondary-container: #334b3e; --on-secondary-container: #cfe9d9;
+      --surface: #0f1511; --surface-low: #171d19; --surface-container: #1b211d; --surface-high: #252b27; --surface-highest: #303632;
+      --on-surface: #dee4dd; --on-surface-variant: #c0c9c1; --outline: #8a938c; --outline-variant: #404943;
+      --inverse-surface: #dee4dd; --inverse-on-surface: #2c322e; --error: #ffb4ab; --star: #f0c040;
       color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #121412; --panel: #1c1f1d; --border: #353b37; --line: #2a2f2c; --head: #242926;
-    --input: #151816; --text: #e8ebe9; --muted: #9aa39e; --accent: #6fbf96; --accent-bg: #22352b;
-    --on-accent: #0e1a14; --danger: #e58663; --star: #f0c040;
+    --primary: #95d5b3; --on-primary: #003824; --primary-container: #105239; --on-primary-container: #b1f1cf;
+    --secondary-container: #334b3e; --on-secondary-container: #cfe9d9;
+    --surface: #0f1511; --surface-low: #171d19; --surface-container: #1b211d; --surface-high: #252b27; --surface-highest: #303632;
+    --on-surface: #dee4dd; --on-surface-variant: #c0c9c1; --outline: #8a938c; --outline-variant: #404943;
+    --inverse-surface: #dee4dd; --inverse-on-surface: #2c322e; --error: #ffb4ab; --star: #f0c040;
     color-scheme: dark;
   }
+  [hidden] { display: none !important; }
   * { box-sizing: border-box; }
+  html, body { margin: 0; }
   body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    font-size: 15px; line-height: 1.4; padding: 12px;
+    background: var(--surface); color: var(--on-surface);
+    font-family: Roboto, -apple-system, "Segoe UI", Arial, sans-serif; font-size: 15px; line-height: 1.45;
   }
-  .app { max-width: 1100px; margin: 0 auto; }
-  .header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 4px 0 10px; }
-  h1 { font-size: 19px; font-weight: 600; margin: 0; }
-  h2 { font-size: 14px; font-weight: 600; color: var(--muted); margin: 18px 0 8px; }
-  .header-actions { display: flex; gap: 6px; }
-  .icon-btn {
-    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 4px 10px; font-size: 15px; color: var(--text); cursor: pointer; line-height: 1.3;
+  .material-symbols-outlined { font-size: 22px; line-height: 1; vertical-align: middle; user-select: none; }
+  h2 { font-size: 14px; font-weight: 500; color: var(--on-surface-variant); margin: 20px 0 8px; letter-spacing: .1px; }
+
+  /* ===== Pantallas de acceso ===== */
+  .center-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .login-card {
+    background: var(--surface-low); border-radius: 28px; padding: 32px 28px; max-width: 380px; width: 100%;
+    text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.15);
+  }
+  .login-card .material-symbols-outlined.big { font-size: 48px; color: var(--primary); }
+  .login-card h1 { font-size: 24px; font-weight: 400; margin: 12px 0 4px; }
+  .login-card p { color: var(--on-surface-variant); margin: 6px 0 20px; font-size: 14px; }
+  .login-card .small { font-size: 12px; margin-top: 16px; }
+  .login-error { color: var(--error); font-size: 13px; margin-top: 12px; min-height: 18px; }
+  .spinner { width: 40px; height: 40px; border: 4px solid var(--surface-highest); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== Drawer ===== */
+  .drawer {
+    position: fixed; top: 0; bottom: 0; left: 0; width: 280px; background: var(--surface-low); z-index: 50;
+    padding: 12px; overflow-y: auto; transform: translateX(-100%); transition: transform .25s ease;
+    border-radius: 0 16px 16px 0;
+  }
+  .drawer.open { transform: translateX(0); box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+  .drawer-title { font-size: 14px; font-weight: 500; color: var(--on-surface-variant); padding: 16px 16px 12px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px; width: 100%; height: 56px; padding: 0 16px 0 16px;
+    border: none; border-radius: 28px; background: none; color: var(--on-surface-variant);
+    font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; text-align: left;
+  }
+  .nav-item:hover { background: var(--surface-high); }
+  .nav-item.active { background: var(--secondary-container); color: var(--on-secondary-container); }
+  .nav-item.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+  .nav-badge { margin-left: auto; font-size: 12px; font-weight: 500; }
+  .drawer hr { border: none; border-top: 1px solid var(--outline-variant); margin: 8px 16px; }
+  .scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 40; display: none; }
+  .scrim.show { display: block; }
+
+  /* ===== Barra superior y contenido ===== */
+  .main { min-height: 100vh; }
+  .top-app-bar {
+    position: sticky; top: 0; z-index: 30; height: 64px; display: flex; align-items: center; gap: 4px;
+    padding: 0 8px; background: var(--surface);
+  }
+  .top-app-bar.scrolled { background: var(--surface-container); }
+  .top-app-bar .title { font-size: 22px; font-weight: 400; margin-left: 4px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .icon-button {
+    width: 48px; height: 48px; border-radius: 50%; border: none; background: none; color: var(--on-surface-variant);
+    display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+  }
+  .icon-button:hover { background: var(--surface-high); }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: var(--primary-container);
+    color: var(--on-primary-container); display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 500; font-size: 14px; overflow: hidden;
+  }
+  .avatar.big { width: 72px; height: 72px; font-size: 28px; }
+  .content { padding: 8px 16px 96px; max-width: 1180px; margin: 0 auto; }
+
+  @media (min-width: 1000px) {
+    .drawer { transform: none; border-radius: 0; box-shadow: none; }
+    .main { margin-left: 280px; }
+    #menuBtn { display: none; }
+    .scrim { display: none !important; }
   }
 
-  .tabs {
-    display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 12px;
-    overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
-  }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab-btn {
-    flex: 0 0 auto; padding: 8px 12px; background: none; border: none; border-bottom: 2px solid transparent;
-    color: var(--muted); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;
-  }
-  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-  .week-nav {
-    display: flex; align-items: center; justify-content: space-between; background: var(--panel);
-    border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 8px; margin-bottom: 10px;
-  }
-  .week-nav button {
-    background: none; border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 12px;
-    font-size: 14px; cursor: pointer; color: var(--text);
-  }
-  .week-nav .week-label { font-size: 13px; font-weight: 600; text-align: center; flex: 1; }
-
-  .toolbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 12px; }
-  .toolbar select {
-    padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--input);
-    color: var(--text); font-size: 14px; max-width: 180px;
-  }
+  /* ===== Botones Material ===== */
   .btn {
-    padding: 7px 12px; border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent);
-    border-radius: var(--radius); font-size: 14px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 24px;
+    border: none; border-radius: 20px; background: var(--primary); color: var(--on-primary);
+    font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; letter-spacing: .1px;
   }
+  .btn:hover { box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+  .btn-tonal {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 40px; padding: 0 20px;
+    border: none; border-radius: 20px; background: var(--secondary-container); color: var(--on-secondary-container);
+    font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+  }
+  .btn-outlined {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 40px; padding: 0 20px;
+    border: 1px solid var(--outline); border-radius: 20px; background: none; color: var(--primary);
+    font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+  }
+  .link-btn {
+    background: none; border: none; border-radius: 20px; padding: 6px 12px; cursor: pointer;
+    color: var(--primary); font: inherit; font-size: 14px; font-weight: 500;
+  }
+  .link-btn:hover { background: var(--surface-high); }
+  .link-btn.danger { color: var(--error); }
+  /* Chip de filtro M3 */
   .btn-light {
-    padding: 6px 10px; border: 1px solid var(--border); background: var(--panel); color: var(--text);
-    border-radius: var(--radius); font-size: 13px; cursor: pointer;
+    display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border: 1px solid var(--outline-variant);
+    border-radius: 8px; background: none; color: var(--on-surface-variant); font: inherit; font-size: 13px;
+    font-weight: 500; cursor: pointer;
   }
-  .btn-light.active { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); font-weight: 600; }
-  .btn-secondary { background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: var(--radius); font-size: 12px; padding: 6px 10px; margin-top: 16px; cursor: pointer; }
-  .link-btn { background: none; border: none; font-size: 13px; padding: 4px 6px; cursor: pointer; color: var(--accent); }
-  .link-btn.danger { color: var(--danger); }
-
-  .banner {
-    display: none; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px;
-    margin-bottom: 10px; border: 1px solid var(--accent); background: var(--accent-bg); color: var(--text);
-    border-radius: var(--radius); font-size: 14px;
+  .btn-light.active { background: var(--secondary-container); color: var(--on-secondary-container); border-color: transparent; }
+  .segmented { display: inline-flex; border: 1px solid var(--outline); border-radius: 20px; overflow: hidden; }
+  .segmented button {
+    height: 40px; padding: 0 16px; border: none; border-right: 1px solid var(--outline); background: none;
+    color: var(--on-surface); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
   }
+  .segmented button:last-child { border-right: none; }
+  .segmented button.active { background: var(--secondary-container); color: var(--on-secondary-container); }
 
-  #weekGrid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-  .day-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); }
-  .day-header {
-    padding: 8px 12px; font-weight: 600; font-size: 14px; background: var(--head);
-    border-bottom: 1px solid var(--border); border-radius: var(--radius) var(--radius) 0 0;
+  /* ===== Campos de texto (outlined) ===== */
+  .text-input, select.field {
+    width: 100%; height: 48px; padding: 0 14px; border: 1px solid var(--outline); border-radius: 4px;
+    background: transparent; color: var(--on-surface); font: inherit; font-size: 16px;
   }
-  .slot-row { padding: 8px 12px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 5px; }
-  .slot-row:last-child { border-bottom: none; }
-  .slot-head { display: flex; align-items: center; gap: 6px; min-height: 22px; }
-  .slot-label { font-size: 13px; color: var(--muted); }
-  .slot-badges { flex: 1; display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; font-size: 11px; }
-  .badge { padding: 1px 6px; border-radius: 10px; background: var(--accent-bg); color: var(--accent); white-space: nowrap; }
-  .badge.stars { background: none; color: var(--star); padding: 0; font-size: 12px; }
-  .more-btn { background: none; border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); cursor: pointer; padding: 0 8px; font-size: 14px; line-height: 1.5; }
-  .more-btn.open { border-color: var(--accent); color: var(--accent); }
-
+  .text-input:focus, select.field:focus { outline: none; border: 2px solid var(--primary); padding: 0 13px; }
+  select.field { width: auto; padding-right: 8px; }
   .ac-wrap { position: relative; flex: 1; min-width: 0; }
-  .text-input {
-    width: 100%; padding: 7px 8px; border: 1px solid var(--border); border-radius: var(--radius);
-    background: var(--input); color: var(--text); font-size: 16px;
-  }
-  .text-input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
-  .slot-input { padding-right: 28px; }
+  .slot-input { height: 44px; padding-right: 36px; }
+  .slot-input:focus { padding-right: 35px; }
   .slot-clear {
-    position: absolute; right: 2px; top: 50%; transform: translateY(-50%); background: none; border: none;
-    font-size: 18px; line-height: 1; color: var(--muted); padding: 4px 8px; cursor: pointer;
+    position: absolute; right: 4px; top: 50%; transform: translateY(-50%); background: none; border: none;
+    color: var(--on-surface-variant); padding: 6px; cursor: pointer; border-radius: 50%; display: flex;
   }
   .suggest {
-    position: absolute; left: 0; right: 0; top: 100%; margin-top: 2px; background: var(--panel);
-    border: 1px solid var(--border); border-radius: var(--radius); max-height: 220px; overflow-y: auto;
-    z-index: 30; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.18); min-width: 180px;
+    position: absolute; left: 0; right: 0; top: 100%; margin-top: 4px; background: var(--surface-container);
+    border-radius: 4px; max-height: 240px; overflow-y: auto; z-index: 35; display: none; padding: 8px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2); min-width: 200px;
   }
-  .suggest-item { display: flex; justify-content: space-between; gap: 8px; padding: 9px 10px; font-size: 14px; border-bottom: 1px solid var(--line); cursor: pointer; }
-  .suggest-item:last-child { border-bottom: none; }
-  .suggest-item.active, .suggest-item:hover { background: var(--accent-bg); }
-  .suggest-meta { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .suggest-item { display: flex; justify-content: space-between; gap: 8px; padding: 12px 16px; font-size: 14px; cursor: pointer; }
+  .suggest-item.active, .suggest-item:hover { background: var(--surface-highest); }
+  .suggest-meta { color: var(--on-surface-variant); font-size: 12px; white-space: nowrap; }
 
+  /* ===== Navegación semanal y barra de menús ===== */
+  .week-nav { display: flex; align-items: center; gap: 4px; margin: 4px 0 12px; }
+  .week-nav .week-label { font-size: 16px; font-weight: 500; text-align: center; min-width: 190px; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; }
+  .banner {
+    display: none; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 16px; margin-bottom: 12px;
+    background: var(--primary-container); color: var(--on-primary-container); border-radius: 12px; font-size: 14px;
+  }
+
+  /* ===== Tarjetas ===== */
+  .card, .panel { background: var(--surface-low); border-radius: 12px; padding: 12px; }
+  .panel { max-width: 720px; }
+  .card-title { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 500; margin: 2px 0 10px; }
+  .card-title .material-symbols-outlined { color: var(--primary); }
+  .card-actions { display: flex; justify-content: flex-end; gap: 4px; margin-top: 8px; }
+  .dash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
+  .dash-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--outline-variant); }
+  .dash-row:last-of-type { border-bottom: none; }
+  .dash-row .lbl { font-size: 12px; color: var(--on-surface-variant); }
+  .dash-row .val { font-size: 15px; }
+  .muted { color: var(--on-surface-variant); }
+  .big-number { font-size: 32px; font-weight: 400; line-height: 1.1; }
+  .progress { height: 4px; border-radius: 2px; background: var(--surface-highest); overflow: hidden; margin: 8px 0 4px; }
+  .progress > div { height: 100%; background: var(--primary); }
+
+  #weekGrid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .day-card { background: var(--surface-low); border-radius: 12px; }
+  .day-header { padding: 12px 16px 4px; font-weight: 500; font-size: 15px; }
+  .day-header.today { color: var(--primary); }
+  .slot-row { padding: 8px 16px 12px; display: flex; flex-direction: column; gap: 6px; }
+  .slot-head { display: flex; align-items: center; gap: 6px; min-height: 28px; }
+  .slot-label { font-size: 12px; font-weight: 500; color: var(--on-surface-variant); letter-spacing: .4px; }
+  .slot-badges { flex: 1; display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; font-size: 11px; }
+  .badge { padding: 2px 8px; border-radius: 8px; background: var(--secondary-container); color: var(--on-secondary-container); white-space: nowrap; }
+  .badge.stars { background: none; color: var(--star); padding: 0; font-size: 13px; }
+  .more-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: none; color: var(--on-surface-variant); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+  .more-btn:hover, .more-btn.open { background: var(--secondary-container); color: var(--on-secondary-container); }
   .swap-target {
-    width: 100%; text-align: left; padding: 7px 8px; border: 1px dashed var(--accent); border-radius: var(--radius);
-    background: var(--input); color: var(--text); font-size: 15px; cursor: pointer;
+    width: 100%; text-align: left; height: 44px; padding: 0 14px; border: 1px dashed var(--primary); border-radius: 4px;
+    background: none; color: var(--on-surface); font: inherit; font-size: 15px; cursor: pointer;
   }
-  .swap-target.source { border-style: solid; background: var(--accent-bg); font-weight: 600; }
+  .swap-target.source { border-style: solid; background: var(--primary-container); color: var(--on-primary-container); font-weight: 500; }
+  .slot-panel { border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; background: var(--surface-container); }
+  .panel-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .panel-line > .panel-title { font-size: 12px; color: var(--on-surface-variant); width: 100%; }
+  .star-btn { background: none; border: none; font-size: 26px; line-height: 1; color: var(--star); cursor: pointer; padding: 0 2px; }
+  .star-btn.sm { font-size: 22px; }
 
-  .slot-panel { border: 1px solid var(--border); border-radius: var(--radius); padding: 8px; display: flex; flex-direction: column; gap: 8px; background: var(--bg); }
-  .panel-line { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
-  .panel-line > .panel-title { font-size: 12px; color: var(--muted); width: 100%; }
-  .star-btn { background: none; border: none; font-size: 24px; line-height: 1; color: var(--star); cursor: pointer; padding: 0 2px; }
-
-  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px; max-width: 680px; }
-  .add-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-  .add-row .ac-wrap { flex: 2 1 160px; }
-  .add-row .qty { flex: 1 1 80px; min-width: 70px; }
-  .add-row select { padding: 7px 8px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--input); color: var(--text); font-size: 14px; }
-  .list-item { display: flex; align-items: center; gap: 8px; padding: 7px 4px; border-bottom: 1px solid var(--line); font-size: 14px; }
+  /* ===== Listas ===== */
+  .add-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; align-items: center; }
+  .add-row .ac-wrap { flex: 2 1 170px; }
+  .add-row .qty { flex: 1 1 90px; min-width: 80px; width: auto; }
+  .list-item { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 4px; border-bottom: 1px solid var(--outline-variant); font-size: 15px; }
   .list-item:last-child { border-bottom: none; }
   .list-item .grow { flex: 1; min-width: 0; word-break: break-word; }
-  .list-item .sub { color: var(--muted); font-size: 12px; }
-  .list-item.done .grow { text-decoration: line-through; color: var(--muted); }
-  .list-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); flex-shrink: 0; }
-  .list-item .text-input { flex: 1; }
-  .stock-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-  .stock-chip { display: inline-flex; align-items: center; gap: 2px; border: 1px solid var(--border); border-radius: 14px; padding: 1px 4px 1px 8px; font-size: 12px; }
-  .empty-note { color: var(--muted); font-size: 13px; padding: 6px 4px; }
-  .status { font-size: 12px; color: var(--muted); text-align: center; margin-top: 14px; min-height: 16px; }
+  .list-item .sub { color: var(--on-surface-variant); font-size: 13px; }
+  .list-item.done .grow { text-decoration: line-through; color: var(--on-surface-variant); }
+  .list-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary); flex-shrink: 0; margin: 0 4px; }
+  .stock-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .stock-chip { display: inline-flex; align-items: center; gap: 2px; border: 1px solid var(--outline-variant); border-radius: 8px; padding: 0 2px 0 10px; font-size: 13px; }
+  .empty-note { color: var(--on-surface-variant); font-size: 14px; padding: 8px 4px; }
 
-  .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); }
-  .week-table, .rank-table { border-collapse: collapse; width: 100%; font-size: 13px; }
-  .week-table th, .week-table td, .rank-table th, .rank-table td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; }
+  /* ===== Tablas ===== */
+  .table-scroll { overflow-x: auto; border-radius: 12px; background: var(--surface-low); }
+  .week-table, .rank-table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  .week-table th, .week-table td, .rank-table th, .rank-table td { border-bottom: 1px solid var(--outline-variant); padding: 12px; text-align: left; }
   .week-table th, .week-table td { white-space: nowrap; }
-  .week-table th, .rank-table th { background: var(--head); font-weight: 600; }
-  .week-table th:first-child, .week-table td:first-child { position: sticky; left: 0; background: var(--head); font-weight: 600; z-index: 1; }
-  .week-table td.empty-cell { color: var(--muted); }
+  .week-table th, .rank-table th { font-weight: 500; color: var(--on-surface-variant); font-size: 13px; }
+  .week-table th:first-child, .week-table td:first-child { position: sticky; left: 0; background: var(--surface-low); font-weight: 500; z-index: 1; }
+  .week-table td.empty-cell { color: var(--on-surface-variant); }
   .rank-table td.num { text-align: right; white-space: nowrap; }
   .rank-stars { color: var(--star); white-space: nowrap; }
 
+  /* ===== Perfil y configuración ===== */
+  .profile-head { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+  .profile-name { font-size: 22px; }
+  .settings-section { margin-bottom: 16px; }
+  .settings-section .card-title { margin-bottom: 4px; }
+  .settings-help { font-size: 13px; color: var(--on-surface-variant); margin: 0 0 10px; }
+
+  /* ===== Snackbar ===== */
+  .snackbar {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(120px); z-index: 60;
+    background: var(--inverse-surface); color: var(--inverse-on-surface); padding: 14px 16px; border-radius: 4px;
+    font-size: 14px; max-width: calc(100% - 32px); box-shadow: 0 3px 8px rgba(0,0,0,.3); transition: transform .2s ease;
+    pointer-events: none;
+  }
+  .snackbar.show { transform: translateX(-50%) translateY(0); }
+  .snackbar.error { background: var(--error); color: #fff; }
+
   @media (min-width: 720px) {
-    body { padding: 20px; }
-    h1 { font-size: 22px; }
-    #weekGrid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
-    .text-input { font-size: 14px; }
-    .week-table { font-size: 14px; }
+    #weekGrid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+    .text-input, select.field { font-size: 14px; }
     .week-table th, .week-table td { white-space: normal; }
-    .week-nav { max-width: 520px; }
+    .content { padding: 8px 24px 48px; }
   }
 
   @media print {
     :root {
-      --bg: #ffffff !important; --panel: #ffffff !important; --border: #999999 !important; --head: #eeeeee !important;
-      --text: #000000 !important; --muted: #555555 !important;
+      --surface: #ffffff !important; --surface-low: #ffffff !important; --on-surface: #000000 !important;
+      --on-surface-variant: #444444 !important; --outline-variant: #999999 !important;
     }
-    .header-actions, .tabs, .toolbar, .banner, .status, .week-nav button,
-    #viewPlan, #viewMeals, #viewShop, #viewPantry, #viewRank { display: none !important; }
-    #viewTable, #weekNav { display: block !important; }
-    .week-nav { border: none; text-align: center; padding: 0 0 8px; max-width: none; }
-    .week-nav .week-label { font-size: 16px; }
-    .table-scroll { overflow: visible; border: none; }
-    .week-table th, .week-table td { white-space: normal; }
-    body { padding: 0; }
-    .app { max-width: none; }
+    .drawer, .scrim, .top-app-bar, .toolbar, .banner, .snackbar, .week-nav button,
+    .view:not(#view-table) { display: none !important; }
+    #view-table, #weekNav { display: block !important; }
+    .main { margin-left: 0 !important; }
+    .week-nav { text-align: center; }
+    .week-nav .week-label { font-size: 18px; }
+    .week-table th, .week-table td { white-space: normal; border: 1px solid #999; }
+    .content { padding: 0; max-width: none; }
   }
 </style>
 </head>
 <body>
-<div class="app">
 
-  <div class="header">
+<div id="loadingScreen" class="center-screen"><div class="spinner"></div></div>
+
+<div id="loginScreen" class="center-screen" hidden>
+  <div class="login-card">
+    <span class="material-symbols-outlined big">restaurant</span>
     <h1>Planificador de comidas</h1>
-    <div class="header-actions">
-      <button class="icon-btn" id="themeBtn" title="Tema">🌓</button>
-      <button class="icon-btn" id="printBtn" title="Imprimir / PDF">🖨️</button>
-    </div>
+    <p>Inicia sesión para continuar</p>
+    <button class="btn" id="loginBtn"><span class="material-symbols-outlined">login</span>Iniciar sesión con Google</button>
+    <div class="login-error" id="loginError"></div>
+    <p class="small">Solo pueden entrar las cuentas autorizadas.</p>
   </div>
-
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="plan">Planificar</button>
-    <button class="tab-btn" data-tab="table">Semana</button>
-    <button class="tab-btn" data-tab="meals">Comidas</button>
-    <button class="tab-btn" data-tab="shop">Compra</button>
-    <button class="tab-btn" data-tab="pantry">Despensa</button>
-    <button class="tab-btn" data-tab="rank">Ranking</button>
-  </div>
-
-  <div class="week-nav" id="weekNav">
-    <button id="prevWeekBtn">←</button>
-    <div class="week-label" id="weekLabel"></div>
-    <button id="nextWeekBtn">→</button>
-  </div>
-
-  <!-- PLANIFICAR -->
-  <div id="viewPlan">
-    <div class="toolbar">
-      <button class="btn-light" id="copyPrevBtn">Copiar semana anterior</button>
-      <button class="btn-light" id="saveTplBtn">Guardar como menú</button>
-      <select id="tplSelect"></select>
-      <button class="btn-light" id="applyTplBtn">Aplicar</button>
-      <button class="link-btn danger" id="delTplBtn">Borrar menú</button>
-    </div>
-    <div class="banner" id="swapBanner">
-      <span>Toca la casilla con la que quieres intercambiar.</span>
-      <button class="btn-light" id="cancelSwapBtn">Cancelar</button>
-    </div>
-    <div id="weekGrid"></div>
-    <button class="btn-secondary" id="resetBtn">Vaciar esta semana</button>
-  </div>
-
-  <!-- VISTA SEMANAL -->
-  <div id="viewTable" style="display:none;">
-    <div class="table-scroll"><table class="week-table" id="weekTable"></table></div>
-  </div>
-
-  <!-- COMIDAS -->
-  <div id="viewMeals" style="display:none;">
-    <div class="panel">
-      <div class="add-row">
-        <input type="text" class="text-input" id="newMealInput" placeholder="Añadir comida (ej. Lentejas)" style="flex:1">
-        <button class="btn" id="addMealBtn">Añadir</button>
-      </div>
-      <div id="mealItems"></div>
-    </div>
-  </div>
-
-  <!-- COMPRA -->
-  <div id="viewShop" style="display:none;">
-    <div class="panel">
-      <div class="add-row">
-        <div class="ac-wrap"><input type="text" class="text-input" id="shopName" placeholder="Producto" autocomplete="off"></div>
-        <input type="text" class="text-input qty" id="shopQty" placeholder="Cantidad">
-        <button class="btn" id="shopAddBtn">Añadir</button>
-      </div>
-      <div id="shopItems"></div>
-      <button class="btn-secondary" id="shopClearBtn">Borrar comprados</button>
-    </div>
-  </div>
-
-  <!-- DESPENSA -->
-  <div id="viewPantry" style="display:none;">
-    <h2>Comidas preparadas (sobras)</h2>
-    <div class="panel">
-      <div class="add-row">
-        <div class="ac-wrap"><input type="text" class="text-input" id="pmName" placeholder="Comida" autocomplete="off"></div>
-        <select id="pmAmount">
-          <option value="3">¼</option><option value="4">⅓</option><option value="6" selected>½</option>
-          <option value="9">¾</option><option value="12">1 ración</option>
-        </select>
-        <select id="pmLoc"><option value="frigo">Frigo</option><option value="congelador">Congelador</option></select>
-        <button class="btn" id="pmAddBtn">Añadir</button>
-      </div>
-      <div id="pmItems"></div>
-    </div>
-    <h2>Productos</h2>
-    <div class="panel">
-      <div class="add-row">
-        <div class="ac-wrap"><input type="text" class="text-input" id="ppName" placeholder="Producto" autocomplete="off"></div>
-        <input type="text" class="text-input qty" id="ppQty" placeholder="Cantidad">
-        <select id="ppLoc"><option value="despensa">Despensa</option><option value="frigo">Frigo</option><option value="congelador">Congelador</option></select>
-        <button class="btn" id="ppAddBtn">Añadir</button>
-      </div>
-      <div id="ppItems"></div>
-    </div>
-  </div>
-
-  <!-- RANKING -->
-  <div id="viewRank" style="display:none;">
-    <div id="rankContent"></div>
-  </div>
-
-  <div class="status" id="statusMsg"></div>
 </div>
 
+<div id="deniedScreen" class="center-screen" hidden>
+  <div class="login-card">
+    <span class="material-symbols-outlined big">block</span>
+    <h1>Cuenta no autorizada</h1>
+    <p>La cuenta <strong id="deniedEmail"></strong> no tiene acceso. Pide a un miembro que la añada en Configuración → Personas autorizadas.</p>
+    <button class="btn-outlined" id="deniedLogoutBtn">Cerrar sesión</button>
+    <p class="small">¿Eres la primera persona en usar la app?</p>
+    <button class="link-btn" id="bootstrapBtn">Autorizar esta cuenta</button>
+    <div class="login-error" id="deniedError"></div>
+  </div>
+</div>
+
+<div id="appShell" hidden>
+  <div class="scrim" id="scrim"></div>
+  <nav class="drawer" id="drawer">
+    <div class="drawer-title">Planificador de comidas</div>
+    <button class="nav-item" data-view="dashboard"><span class="material-symbols-outlined">space_dashboard</span>Inicio</button>
+    <button class="nav-item" data-view="plan"><span class="material-symbols-outlined">edit_calendar</span>Planificar</button>
+    <button class="nav-item" data-view="table"><span class="material-symbols-outlined">calendar_view_week</span>Semana</button>
+    <button class="nav-item" data-view="meals"><span class="material-symbols-outlined">restaurant_menu</span>Comidas</button>
+    <button class="nav-item" data-view="shop"><span class="material-symbols-outlined">shopping_cart</span>Compra<span class="nav-badge" id="shopBadge"></span></button>
+    <button class="nav-item" data-view="pantry"><span class="material-symbols-outlined">kitchen</span>Despensa</button>
+    <button class="nav-item" data-view="rank"><span class="material-symbols-outlined">leaderboard</span>Ranking</button>
+    <hr>
+    <button class="nav-item" data-view="profile"><span class="material-symbols-outlined">account_circle</span>Perfil</button>
+    <button class="nav-item" data-view="settings"><span class="material-symbols-outlined">settings</span>Configuración</button>
+  </nav>
+
+  <div class="main">
+    <header class="top-app-bar" id="topBar">
+      <button class="icon-button" id="menuBtn" title="Menú"><span class="material-symbols-outlined">menu</span></button>
+      <div class="title" id="viewTitle">Inicio</div>
+      <button class="icon-button" id="printBtn" title="Imprimir / PDF"><span class="material-symbols-outlined">print</span></button>
+      <button class="icon-button" id="avatarBtn" title="Perfil"><span class="avatar" id="topAvatar"></span></button>
+    </header>
+
+    <main class="content">
+      <div class="week-nav" id="weekNav">
+        <button class="icon-button" id="prevWeekBtn" title="Semana anterior"><span class="material-symbols-outlined">chevron_left</span></button>
+        <div class="week-label" id="weekLabel"></div>
+        <button class="icon-button" id="nextWeekBtn" title="Semana siguiente"><span class="material-symbols-outlined">chevron_right</span></button>
+        <button class="link-btn" id="todayBtn">Hoy</button>
+      </div>
+
+      <section class="view" id="view-dashboard"><div class="dash-grid" id="dashContent"></div></section>
+
+      <section class="view" id="view-plan" hidden>
+        <div class="toolbar">
+          <button class="btn-tonal" id="copyPrevBtn"><span class="material-symbols-outlined">content_copy</span>Copiar semana anterior</button>
+          <button class="btn-tonal" id="saveTplBtn"><span class="material-symbols-outlined">bookmark_add</span>Guardar como menú</button>
+          <select class="field" id="tplSelect"></select>
+          <button class="btn-outlined" id="applyTplBtn">Aplicar menú</button>
+        </div>
+        <div class="banner" id="swapBanner">
+          <span>Toca la casilla con la que quieres intercambiar.</span>
+          <button class="link-btn" id="cancelSwapBtn">Cancelar</button>
+        </div>
+        <div id="weekGrid"></div>
+        <div style="margin-top:16px"><button class="link-btn danger" id="resetBtn">Vaciar esta semana</button></div>
+      </section>
+
+      <section class="view" id="view-table" hidden>
+        <div class="table-scroll"><table class="week-table" id="weekTable"></table></div>
+      </section>
+
+      <section class="view" id="view-meals" hidden>
+        <div class="panel">
+          <div class="add-row">
+            <input type="text" class="text-input" id="newMealInput" placeholder="Añadir comida (ej. Lentejas)" style="flex:1">
+            <button class="btn" id="addMealBtn">Añadir</button>
+          </div>
+          <div id="mealItems"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-shop" hidden>
+        <div class="panel">
+          <div class="add-row">
+            <div class="ac-wrap"><input type="text" class="text-input" id="shopName" placeholder="Producto" autocomplete="off"></div>
+            <input type="text" class="text-input qty" id="shopQty" placeholder="Cantidad">
+            <button class="btn" id="shopAddBtn">Añadir</button>
+          </div>
+          <div id="shopItems"></div>
+          <div class="card-actions"><button class="link-btn" id="shopClearBtn">Borrar comprados</button></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-pantry" hidden>
+        <h2>Comidas preparadas (sobras)</h2>
+        <div class="panel">
+          <div class="add-row">
+            <div class="ac-wrap"><input type="text" class="text-input" id="pmName" placeholder="Comida" autocomplete="off"></div>
+            <select class="field" id="pmAmount">
+              <option value="3">¼</option><option value="4">⅓</option><option value="6" selected>½</option>
+              <option value="9">¾</option><option value="12">1 ración</option>
+            </select>
+            <select class="field" id="pmLoc"><option value="frigo">Frigo</option><option value="congelador">Congelador</option></select>
+            <button class="btn" id="pmAddBtn">Añadir</button>
+          </div>
+          <div id="pmItems"></div>
+        </div>
+        <h2>Productos</h2>
+        <div class="panel">
+          <div class="add-row">
+            <div class="ac-wrap"><input type="text" class="text-input" id="ppName" placeholder="Producto" autocomplete="off"></div>
+            <input type="text" class="text-input qty" id="ppQty" placeholder="Cantidad">
+            <select class="field" id="ppLoc"><option value="despensa">Despensa</option><option value="frigo">Frigo</option><option value="congelador">Congelador</option></select>
+            <button class="btn" id="ppAddBtn">Añadir</button>
+          </div>
+          <div id="ppItems"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-rank" hidden><div id="rankContent"></div></section>
+      <section class="view" id="view-profile" hidden><div id="profileContent"></div></section>
+      <section class="view" id="view-settings" hidden><div id="settingsContent"></div></section>
+    </main>
+  </div>
+</div>
+
+<div class="snackbar" id="statusMsg"></div>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
   // ====== Configuración de Firebase ======
@@ -311,37 +438,50 @@
   // =======================================
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
+  const auth = firebase.auth();
   const dbRef = db.ref('planificador-comidas');
+  const allowedRef = db.ref('allowed');
 </script>
 <script>
   const DAYS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
   const SLOTS = ['Almuerzo','Cena'];
   const MONTHS = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-  // Las cantidades de sobras se guardan en doceavos de ración (¼ = 3, ⅓ = 4, ½ = 6, 1 = 12).
+  // Sobras en doceavos de ración (¼ = 3, ⅓ = 4, ½ = 6, 1 = 12).
   const LEFT_OPTS = [['¼', 3], ['⅓', 4], ['½', 6]];
   const LOCS = { frigo: 'Frigo', congelador: 'Congelador' };
   const PLOCS = { despensa: 'Despensa', frigo: 'Frigo', congelador: 'Congelador' };
+  const VIEW_TITLES = { dashboard: 'Inicio', plan: 'Planificar', table: 'Semana', meals: 'Comidas', shop: 'Lista de la compra',
+                        pantry: 'Despensa', rank: 'Ranking', profile: 'Perfil', settings: 'Configuración' };
 
-  /* Estructura de datos en Firebase (nodo planificador-comidas):
-     meals: [nombres]                         catálogo acumulativo de comidas
-     weeks: {lunesISO: {Día: {Almuerzo, Cena}}} comidas planificadas
-     info:  {lunesISO: {Día: {Almuerzo: {r, s, sl, pf, pc}}}}
-            r = valoración 1-5, s = sobra (doceavos), sl = ubicación de la sobra,
-            pf/pc = doceavos sacados de frigo/congelador
-     pantryMeals: [{name, frigo, congelador}] sobras guardadas (doceavos)
-     pantryProducts: [{id, name, qty, loc}]
-     shopping: [{id, name, qty, done}]
-     products: [nombres]                      catálogo acumulativo de productos
-     templates: {id: {name, days}}            menús reutilizables */
-  let state = { meals: [], weeks: {}, info: {}, pantryMeals: [], pantryProducts: [], shopping: [], products: [], templates: {} };
+  /* Estructura en Firebase:
+     allowed: {correo_codificado: true}        personas autorizadas ('.' sustituido por ',')
+     planificador-comidas:
+       meals, weeks, info {r, by, s, sl, pf, pc}, pantryMeals, pantryProducts, shopping, products, templates,
+       members: {uid: {name, email, photo, alias, lastSeen}} */
+  function emptyState() {
+    return { meals: [], weeks: {}, info: {}, pantryMeals: [], pantryProducts: [], shopping: [], products: [], templates: {}, members: {} };
+  }
+  let state = emptyState();
+  let allowedList = {};
+  let currentUser = null;
+  let authorized = false;
+  let currentView = 'dashboard';
   let currentWeekStart = getMondayISO(new Date());
-  let currentTab = 'plan';
-  let editingMeal = null;
-  let openPanel = null;
-  let swapSrc = null;
-  let panelLoc = 'frigo';
+  let editingMeal = null, openPanel = null, swapSrc = null;
+
+  /* ---------- Preferencias del dispositivo ---------- */
+  let prefs = { theme: 'auto', leftoverLoc: 'frigo' };
+  try { Object.assign(prefs, JSON.parse(localStorage.getItem('planificador-prefs') || '{}')); } catch (e) {}
+  function savePrefs() { try { localStorage.setItem('planificador-prefs', JSON.stringify(prefs)); } catch (e) {} }
+  let panelLoc = prefs.leftoverLoc === 'congelador' ? 'congelador' : 'frigo';
+  function applyTheme() {
+    if (prefs.theme === 'dark' || prefs.theme === 'light') document.documentElement.setAttribute('data-theme', prefs.theme);
+    else document.documentElement.removeAttribute('data-theme');
+  }
+  applyTheme();
 
   /* ---------- Utilidades ---------- */
+  function $(id) { return document.getElementById(id); }
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
   function toArr(x) { return Array.isArray(x) ? x.filter(v => v != null) : (x && typeof x === 'object' ? Object.values(x).filter(v => v != null) : []); }
   function norm(s) { return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(); }
@@ -357,47 +497,32 @@
     if (r) { if (map[r]) rs = map[r]; else { const g = gcd(r, 12); rs = (r / g) + '/' + (12 / g); } }
     return whole ? (rs ? whole + ' ' + rs : String(whole)) : rs;
   }
-  function el(tag, cls, text) {
-    const e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (text != null) e.textContent = text;
-    return e;
-  }
-  function isTyping() {
-    const a = document.activeElement;
-    return !!a && a.tagName === 'INPUT' && (a.type === 'text' || a.type === 'search');
-  }
+  function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function icon(name) { return el('span', 'material-symbols-outlined', name); }
+  function isTyping() { const a = document.activeElement; return !!a && a.tagName === 'INPUT' && (a.type === 'text' || a.type === 'email' || a.type === 'search'); }
+  function encEmail(e) { return String(e).trim().toLowerCase().replace(/\./g, ','); }
+  function decEmail(k) { return String(k).replace(/,/g, '.'); }
 
   /* ---------- Fechas ---------- */
-  function getMondayISO(date) {
-    const d = new Date(date);
-    const day = d.getDay();
-    d.setDate(d.getDate() + ((day === 0 ? -6 : 1) - day));
-    d.setHours(0, 0, 0, 0);
-    return isoDateStr(d);
-  }
+  function getMondayISO(date) { const d = new Date(date); const day = d.getDay(); d.setDate(d.getDate() + ((day === 0 ? -6 : 1) - day)); d.setHours(0, 0, 0, 0); return isoDateStr(d); }
   function isoDateStr(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
   function addDaysISO(iso, days) { const d = new Date(iso + 'T00:00:00'); d.setDate(d.getDate() + days); return isoDateStr(d); }
-  function formatWeekLabel(iso) {
-    const mo = new Date(iso + 'T00:00:00'), su = new Date(addDaysISO(iso, 6) + 'T00:00:00');
-    return `${mo.getDate()} ${MONTHS[mo.getMonth()]} – ${su.getDate()} ${MONTHS[su.getMonth()]} ${su.getFullYear()}`;
-  }
+  function formatWeekLabel(iso) { const mo = new Date(iso + 'T00:00:00'), su = new Date(addDaysISO(iso, 6) + 'T00:00:00'); return `${mo.getDate()} ${MONTHS[mo.getMonth()]} – ${su.getDate()} ${MONTHS[su.getMonth()]} ${su.getFullYear()}`; }
   function dayDateLabel(i) { const d = new Date(addDaysISO(currentWeekStart, i) + 'T00:00:00'); return `${DAYS[i]} ${d.getDate()}`; }
+  function todayRef() { const t = new Date(); return { iso: getMondayISO(t), day: DAYS[(t.getDay() + 6) % 7], date: t }; }
 
   /* ---------- Acceso a datos ---------- */
   function emptyDays() { const a = {}; DAYS.forEach(d => { a[d] = {}; SLOTS.forEach(s => a[d][s] = ''); }); return a; }
   function ensureWeek(iso) {
     if (!state.weeks[iso] || typeof state.weeks[iso] !== 'object') state.weeks[iso] = emptyDays();
-    DAYS.forEach(d => {
-      if (!state.weeks[iso][d]) state.weeks[iso][d] = {};
-      SLOTS.forEach(s => { if (typeof state.weeks[iso][d][s] !== 'string') state.weeks[iso][d][s] = ''; });
-    });
+    DAYS.forEach(d => { if (!state.weeks[iso][d]) state.weeks[iso][d] = {}; SLOTS.forEach(s => { if (typeof state.weeks[iso][d][s] !== 'string') state.weeks[iso][d][s] = ''; }); });
   }
   function W(iso) { iso = iso || currentWeekStart; ensureWeek(iso); return state.weeks[iso]; }
   function getInfo(iso, d, s) { return (state.info[iso] && state.info[iso][d] && state.info[iso][d][s]) || {}; }
   function setInfo(iso, d, s, obj) {
     const c = {};
     ['r', 's', 'pf', 'pc'].forEach(k => { if (obj[k]) c[k] = obj[k]; });
+    if (c.r && obj.by) c.by = obj.by;
     if (c.s) c.sl = obj.sl || 'frigo';
     if (!state.info[iso]) state.info[iso] = {};
     if (!state.info[iso][d]) state.info[iso][d] = {};
@@ -406,7 +531,6 @@
   function findMeal(t) { const n = norm(t); return state.meals.find(m => norm(m) === n); }
   function ensureMeal(t) { const ex = findMeal(t); if (ex) return { name: ex, added: false }; state.meals.push(t); return { name: t, added: true }; }
   function ensureProduct(t) { const n = norm(t); if (state.products.some(p => norm(p) === n)) return false; state.products.push(t); return true; }
-
   function pmEntry(name, create) {
     const n = norm(name);
     let e = state.pantryMeals.find(x => norm(x.name) === n);
@@ -430,8 +554,13 @@
     if (i.pf) pmAdjust(meal, 'frigo', i.pf);
     if (i.pc) pmAdjust(meal, 'congelador', i.pc);
   }
+  function memberName(id) {
+    const m = state.members[id];
+    if (m) return m.alias || m.name || m.email || 'Miembro';
+    return 'Miembro';
+  }
 
-  /* ---------- Firebase ---------- */
+  /* ---------- Sincronización con Firebase ---------- */
   function applyRemote(p) {
     p = p || {};
     state.meals = toArr(p.meals).filter(x => typeof x === 'string' && x);
@@ -442,57 +571,122 @@
     state.shopping = toArr(p.shopping).filter(x => x && x.name);
     state.products = toArr(p.products).filter(x => typeof x === 'string' && x);
     state.templates = (p.templates && typeof p.templates === 'object') ? p.templates : {};
+    state.members = (p.members && typeof p.members === 'object') ? p.members : {};
     ensureWeek(currentWeekStart);
   }
   function getPath(p) { return p.split('/').reduce((o, k) => (o == null ? undefined : o[k]), state); }
-  // Guarda solo las ramas modificadas, para que los cambios simultáneos de varias personas no se pisen.
+  // Guarda solo las ramas modificadas, para que los cambios simultáneos no se pisen.
   function save(paths, msg) {
     const upd = {};
-    Array.from(new Set(paths)).forEach(p => {
-      const v = getPath(p);
-      upd[p] = (v === undefined) ? null : JSON.parse(JSON.stringify(v));
-    });
-    dbRef.update(upd)
-      .then(() => showStatus(msg || 'Guardado', true))
-      .catch(() => showStatus('No se pudo guardar', false));
+    Array.from(new Set(paths)).forEach(p => { const v = getPath(p); upd[p] = (v === undefined) ? null : JSON.parse(JSON.stringify(v)); });
+    dbRef.update(upd).then(() => showStatus(msg || 'Guardado')).catch(() => showStatus('No se pudo guardar', true));
   }
   let renderTimer = null, pendingFull = false;
   function scheduleRender() {
     clearTimeout(renderTimer);
     renderTimer = setTimeout(() => {
+      if (!authorized) return;
       if (isTyping()) { pendingFull = true; renderPassive(); } else { pendingFull = false; renderAll(); }
     }, 60);
   }
-  dbRef.on('value', (snap) => { applyRemote(snap.val()); scheduleRender(); },
-                    () => showStatus('Sin conexión con la base de datos', false));
   document.addEventListener('focusout', () => {
-    setTimeout(() => { if (pendingFull && !isTyping()) { pendingFull = false; renderAll(); } }, 250);
+    setTimeout(() => { if (authorized && pendingFull && !isTyping()) { pendingFull = false; renderAll(); } }, 250);
   });
 
   let statusTimer = null;
-  function showStatus(text, ok) {
-    const e = document.getElementById('statusMsg');
+  function showStatus(text, isError) {
+    const e = $('statusMsg');
     e.textContent = text;
-    e.style.color = ok === false ? 'var(--danger)' : 'var(--muted)';
+    e.classList.toggle('error', !!isError);
+    e.classList.add('show');
     clearTimeout(statusTimer);
-    statusTimer = setTimeout(() => { e.textContent = ''; }, 2500);
+    statusTimer = setTimeout(() => e.classList.remove('show'), 2600);
   }
 
-  /* ---------- Ranking ---------- */
-  function computeStats() {
+  /* ---------- Autenticación ---------- */
+  function showScreen(name) {
+    $('loadingScreen').hidden = name !== 'loading';
+    $('loginScreen').hidden = name !== 'login';
+    $('deniedScreen').hidden = name !== 'denied';
+    $('appShell').hidden = name !== 'app';
+  }
+  function startData() {
+    authorized = false;
+    dbRef.on('value', (snap) => {
+      applyRemote(snap.val());
+      if (!authorized) {
+        authorized = true;
+        showScreen('app');
+        registerMember();
+        setView(currentView);
+        renderAll();
+        return;
+      }
+      scheduleRender();
+    }, () => {
+      authorized = false;
+      stopData();
+      $('deniedEmail').textContent = currentUser ? currentUser.email : '';
+      $('deniedError').textContent = '';
+      showScreen('denied');
+    });
+    allowedRef.on('value', (snap) => { allowedList = snap.val() || {}; if (authorized && !isTyping()) renderSettings(); }, () => {});
+  }
+  function stopData() {
+    dbRef.off(); allowedRef.off();
+    state = emptyState(); allowedList = {};
+  }
+  function registerMember() {
+    const u = currentUser;
+    if (!u) return;
+    db.ref('planificador-comidas/members/' + u.uid).update({
+      name: u.displayName || '', email: (u.email || '').toLowerCase(), photo: u.photoURL || '',
+      lastSeen: firebase.database.ServerValue.TIMESTAMP
+    }).catch(() => {});
+  }
+  auth.onAuthStateChanged((user) => {
+    if (user) { currentUser = user; showScreen('loading'); startData(); }
+    else { stopData(); currentUser = null; authorized = false; showScreen('login'); }
+  });
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  $('loginBtn').onclick = async () => {
+    $('loginError').textContent = '';
+    try { await auth.signInWithPopup(provider); }
+    catch (e) {
+      if (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment') auth.signInWithRedirect(provider);
+      else if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') $('loginError').textContent = 'No se pudo iniciar sesión: ' + (e.message || e.code);
+    }
+  };
+  auth.getRedirectResult().catch((e) => { $('loginError').textContent = 'No se pudo iniciar sesión: ' + (e.message || e.code); });
+  $('deniedLogoutBtn').onclick = () => auth.signOut();
+  // Solo funciona mientras no haya ninguna persona autorizada (lo controlan las reglas de la base de datos).
+  $('bootstrapBtn').onclick = () => {
+    if (!currentUser) return;
+    allowedRef.child(encEmail(currentUser.email)).set(true)
+      .then(() => { showScreen('loading'); startData(); })
+      .catch(() => { $('deniedError').textContent = 'No permitido: ya hay personas autorizadas. Pide acceso a un miembro.'; });
+  };
+
+  /* ---------- Estadísticas ---------- */
+  function computeStats(byUid) {
     const stats = {};
     Object.keys(state.weeks).forEach(w => {
       DAYS.forEach(d => SLOTS.forEach(s => {
         const m = state.weeks[w] && state.weeks[w][d] && state.weeks[w][d][s];
         if (!m) return;
+        const i = getInfo(w, d, s);
+        if (byUid && i.by !== byUid) return;
         const k = norm(m);
         const st = stats[k] || (stats[k] = { name: m, sum: 0, n: 0, times: 0 });
         st.times++;
-        const r = getInfo(w, d, s).r;
-        if (r) { st.sum += r; st.n++; }
+        if (i.r) { st.sum += i.r; st.n++; }
       }));
     });
     return stats;
+  }
+  function rankedList(stats) {
+    return Object.values(stats).filter(x => x.n).sort((a, b) => (b.sum / b.n - a.sum / a.n) || (b.n - a.n) || cmp(a.name, b.name));
   }
   function mealMeta(name, stats) {
     const parts = [];
@@ -502,8 +696,9 @@
     if (tot) parts.push(fmtTw(tot) + ' en despensa');
     return parts.join(' · ');
   }
+  function starsText(n) { const f = Math.round(n); return '★'.repeat(f) + '☆'.repeat(5 - f); }
 
-  /* ---------- Autocompletado genérico ---------- */
+  /* ---------- Autocompletado ---------- */
   function matchList(list, q) {
     list = list.slice().sort(cmp);
     if (!q) return list;
@@ -517,13 +712,11 @@
     let items = [], active = -1;
     function highlight() {
       Array.from(dd.children).forEach((c, i) => c.classList.toggle('active', i === active));
-      const c = dd.children[active];
-      if (c && c.scrollIntoView) c.scrollIntoView({ block: 'nearest' });
+      const c = dd.children[active]; if (c && c.scrollIntoView) c.scrollIntoView({ block: 'nearest' });
     }
     function refresh() {
       items = getItems(norm(input.value)).slice(0, 30);
-      active = -1;
-      dd.innerHTML = '';
+      active = -1; dd.innerHTML = '';
       if (!items.length) { dd.style.display = 'none'; return; }
       items.forEach(it => {
         const o = el('div', 'suggest-item');
@@ -552,16 +745,14 @@
     return matchList(all, q).map(m => ({ value: m }));
   }
 
-  /* ---------- Planificar: casillas ---------- */
+  /* ---------- Planificar ---------- */
+  function slotKey(iso, d, s) { return iso + '|' + d + '|' + s; }
   function commitSlot(d, s, raw) {
-    let text = cleanText(raw);
-    let added = false;
+    let text = cleanText(raw), added = false;
     if (text) { const r = ensureMeal(text); text = r.name; added = r.added; }
-    const a = W();
-    const old = a[d][s];
+    const a = W(), old = a[d][s];
     if (old === text && !added) return text;
-    const iso = currentWeekStart;
-    const paths = ['weeks/' + iso];
+    const iso = currentWeekStart, paths = ['weeks/' + iso];
     if (old !== text && Object.keys(getInfo(iso, d, s)).length) {
       revertEffects(iso, d, s, old);
       setInfo(iso, d, s, {});
@@ -570,26 +761,19 @@
     }
     a[d][s] = text;
     if (added) paths.push('meals');
-    renderWeekTable();
-    renderMealList();
+    renderWeekTable(); renderMealList();
     save(paths, added ? 'Comida añadida a la lista' : 'Guardado');
     return text;
   }
-  function slotKey(iso, d, s) { return iso + '|' + d + '|' + s; }
-
   function buildSlotInput(d, s) {
     const wrap = el('div', 'ac-wrap');
     const input = el('input', 'text-input slot-input');
-    input.type = 'text';
-    input.placeholder = '—';
-    input.autocomplete = 'off';
+    input.type = 'text'; input.placeholder = '—'; input.autocomplete = 'off';
     input.setAttribute('autocapitalize', 'sentences');
     input.value = W()[d][s] || '';
-    const clear = el('button', 'slot-clear', '×');
-    clear.type = 'button';
-    clear.title = 'Borrar';
-    wrap.appendChild(input);
-    wrap.appendChild(clear);
+    const clear = el('button', 'slot-clear'); clear.type = 'button'; clear.title = 'Borrar';
+    clear.appendChild(icon('close'));
+    wrap.append(input, clear);
     function updateClear() { clear.style.display = input.value ? '' : 'none'; }
     function commit() { input.value = commitSlot(d, s, input.value); updateClear(); }
     attachAutocomplete(input, mealItems, () => { commit(); input.blur(); });
@@ -603,35 +787,28 @@
     updateClear();
     return wrap;
   }
-
   function buildSlotRow(d, s) {
-    const iso = currentWeekStart;
-    const key = slotKey(iso, d, s);
-    const meal = W()[d][s];
-    const info = getInfo(iso, d, s);
+    const iso = currentWeekStart, key = slotKey(iso, d, s), meal = W()[d][s], info = getInfo(iso, d, s);
     const row = el('div', 'slot-row');
     const head = el('div', 'slot-head');
-    head.appendChild(el('span', 'slot-label', s));
+    head.appendChild(el('span', 'slot-label', s.toUpperCase()));
     const badges = el('span', 'slot-badges');
     if (meal) {
-      if (info.r) badges.appendChild(el('span', 'badge stars', '★'.repeat(info.r) + '☆'.repeat(5 - info.r)));
+      if (info.r) badges.appendChild(el('span', 'badge stars', starsText(info.r)));
       if (info.s) badges.appendChild(el('span', 'badge', `sobra ${fmtTw(info.s)} · ${LOCS[info.sl] || 'Frigo'}`));
       const used = (info.pf || 0) + (info.pc || 0);
       if (used) badges.appendChild(el('span', 'badge', `de despensa ${fmtTw(used)}`));
-      else {
-        const st = pmStock(meal), tot = st.frigo + st.congelador;
-        if (tot) badges.appendChild(el('span', 'badge', `🥡 ${fmtTw(tot)} en despensa`));
-      }
+      else { const st = pmStock(meal), tot = st.frigo + st.congelador; if (tot) badges.appendChild(el('span', 'badge', `${fmtTw(tot)} en despensa`)); }
     }
     head.appendChild(badges);
     if (meal && !swapSrc) {
-      const more = el('button', 'more-btn' + (openPanel === key ? ' open' : ''), '⋯');
+      const more = el('button', 'more-btn' + (openPanel === key ? ' open' : ''));
+      more.appendChild(icon('more_horiz'));
       more.title = 'Valorar, sobras, despensa, intercambiar';
       more.onclick = () => { openPanel = (openPanel === key) ? null : key; renderWeekGrid(); };
       head.appendChild(more);
     }
     row.appendChild(head);
-
     if (swapSrc) {
       const isSrc = swapSrc.w === iso && swapSrc.d === d && swapSrc.s === s;
       const b = el('button', 'swap-target' + (isSrc ? ' source' : ''), (isSrc ? '↔ ' : '') + (meal || '—'));
@@ -643,16 +820,15 @@
     if (meal && openPanel === key) row.appendChild(buildPanel(d, s, meal, info));
     return row;
   }
-
   function buildPanel(d, s, meal, info) {
+    const iso = currentWeekStart;
     const p = el('div', 'slot-panel');
-
     const l1 = el('div', 'panel-line');
-    l1.appendChild(el('span', 'panel-title', '¿Cuánto te ha gustado?'));
+    l1.appendChild(el('span', 'panel-title', '¿Cuánto te ha gustado?' + (info.r && info.by ? ` (valorada por ${memberName(info.by)})` : '')));
     for (let i = 1; i <= 5; i++) {
       const b = el('button', 'star-btn', i <= (info.r || 0) ? '★' : '☆');
       b.title = i + ' de 5';
-      b.onclick = () => setRating(d, s, info.r === i ? 0 : i);
+      b.onclick = () => setRatingAt(iso, d, s, info.r === i ? 0 : i);
       l1.appendChild(b);
     }
     p.appendChild(l1);
@@ -662,18 +838,10 @@
     const none = el('button', 'btn-light' + (!info.s ? ' active' : ''), 'Nada');
     none.onclick = () => setLeftover(d, s, 0);
     l2.appendChild(none);
-    LEFT_OPTS.forEach(([label, tw]) => {
-      const b = el('button', 'btn-light' + (info.s === tw ? ' active' : ''), label);
-      b.onclick = () => setLeftover(d, s, tw);
-      l2.appendChild(b);
-    });
+    LEFT_OPTS.forEach(([label, tw]) => { const b = el('button', 'btn-light' + (info.s === tw ? ' active' : ''), label); b.onclick = () => setLeftover(d, s, tw); l2.appendChild(b); });
     const curLoc = info.s ? (info.sl || 'frigo') : panelLoc;
-    l2.appendChild(el('span', null, ' → '));
-    Object.keys(LOCS).forEach(loc => {
-      const b = el('button', 'btn-light' + (curLoc === loc ? ' active' : ''), LOCS[loc]);
-      b.onclick = () => setLeftoverLoc(d, s, loc);
-      l2.appendChild(b);
-    });
+    l2.appendChild(el('span', 'muted', ' → '));
+    Object.keys(LOCS).forEach(loc => { const b = el('button', 'btn-light' + (curLoc === loc ? ' active' : ''), LOCS[loc]); b.onclick = () => setLeftoverLoc(d, s, loc); l2.appendChild(b); });
     p.appendChild(l2);
 
     const used = (info.pf || 0) + (info.pc || 0);
@@ -681,20 +849,14 @@
     if (used || tot) {
       const l3 = el('div', 'panel-line');
       l3.appendChild(el('span', 'panel-title', 'Despensa'));
-      if (used) {
-        const b = el('button', 'btn-light', `Deshacer: devolver ${fmtTw(used)} a la despensa`);
-        b.onclick = () => undoUsePantry(d, s);
-        l3.appendChild(b);
-      } else {
-        const take = Math.min(tot, 12);
+      if (used) { const b = el('button', 'btn-light', `Deshacer: devolver ${fmtTw(used)}`); b.onclick = () => undoUsePantry(d, s); l3.appendChild(b); }
+      else {
         const where = [st.frigo ? `frigo ${fmtTw(st.frigo)}` : '', st.congelador ? `congelador ${fmtTw(st.congelador)}` : ''].filter(Boolean).join(', ');
-        const b = el('button', 'btn-light', `Comer de la despensa: ${fmtTw(take)} (${where})`);
-        b.onclick = () => usePantry(d, s);
-        l3.appendChild(b);
+        const b = el('button', 'btn-light', `Comer de la despensa: ${fmtTw(Math.min(tot, 12))} (${where})`);
+        b.onclick = () => usePantry(d, s); l3.appendChild(b);
       }
       p.appendChild(l3);
     }
-
     const l4 = el('div', 'panel-line');
     const sw = el('button', 'btn-light', '⇄ Intercambiar con otra casilla');
     sw.onclick = () => startSwap(d, s);
@@ -702,13 +864,14 @@
     p.appendChild(l4);
     return p;
   }
-
-  function setRating(d, s, r) {
-    const iso = currentWeekStart, i = getInfo(iso, d, s);
-    setInfo(iso, d, s, Object.assign({}, i, { r }));
-    renderWeekGrid(); renderRanking();
+  function setRatingAt(iso, d, s, r) {
+    ensureWeek(iso);
+    const i = getInfo(iso, d, s);
+    setInfo(iso, d, s, Object.assign({}, i, { r, by: r ? (currentUser ? currentUser.uid : '') : '' }));
+    renderWeekGrid(); renderRanking(); renderDashboard(); renderProfile();
     save(['info/' + iso], r ? `Valoración: ${r} de 5` : 'Valoración eliminada');
   }
+  function setRating(d, s, r) { setRatingAt(currentWeekStart, d, s, r); }
   function setLeftover(d, s, tw) {
     const iso = currentWeekStart, meal = W()[d][s], i = getInfo(iso, d, s);
     if (!meal) return;
@@ -716,7 +879,7 @@
     if (i.s) pmAdjust(meal, i.sl || 'frigo', -i.s);
     if (tw) pmAdjust(meal, loc, tw);
     setInfo(iso, d, s, Object.assign({}, i, { s: tw, sl: loc }));
-    renderWeekGrid(); renderPantry();
+    renderWeekGrid(); renderPantry(); renderDashboard();
     save(['info/' + iso, 'pantryMeals'], tw ? `Sobra de ${fmtTw(tw)} guardada en ${LOCS[loc].toLowerCase()}` : 'Sobra eliminada');
   }
   function setLeftoverLoc(d, s, loc) {
@@ -726,22 +889,20 @@
       pmAdjust(meal, i.sl || 'frigo', -i.s);
       pmAdjust(meal, loc, i.s);
       setInfo(iso, d, s, Object.assign({}, i, { sl: loc }));
-      renderPantry();
+      renderPantry(); renderDashboard();
       save(['info/' + iso, 'pantryMeals'], `Sobra movida a ${LOCS[loc].toLowerCase()}`);
     }
     renderWeekGrid();
   }
   function usePantry(d, s) {
-    const iso = currentWeekStart, meal = W()[d][s], i = getInfo(iso, d, s);
-    const st = pmStock(meal);
+    const iso = currentWeekStart, meal = W()[d][s], i = getInfo(iso, d, s), st = pmStock(meal);
     let need = 12;
     const pf = Math.min(st.frigo, need); need -= pf;
     const pc = Math.min(st.congelador, need);
     if (!pf && !pc) return;
-    pmAdjust(meal, 'frigo', -pf);
-    pmAdjust(meal, 'congelador', -pc);
+    pmAdjust(meal, 'frigo', -pf); pmAdjust(meal, 'congelador', -pc);
     setInfo(iso, d, s, Object.assign({}, i, { pf, pc }));
-    renderWeekGrid(); renderPantry();
+    renderWeekGrid(); renderPantry(); renderDashboard();
     save(['info/' + iso, 'pantryMeals'], `Sacado ${fmtTw(pf + pc)} de la despensa`);
   }
   function undoUsePantry(d, s) {
@@ -749,11 +910,9 @@
     if (i.pf) pmAdjust(meal, 'frigo', i.pf);
     if (i.pc) pmAdjust(meal, 'congelador', i.pc);
     setInfo(iso, d, s, Object.assign({}, i, { pf: 0, pc: 0 }));
-    renderWeekGrid(); renderPantry();
+    renderWeekGrid(); renderPantry(); renderDashboard();
     save(['info/' + iso, 'pantryMeals'], 'Devuelto a la despensa');
   }
-
-  /* ---------- Intercambio de casillas ---------- */
   function startSwap(d, s) { swapSrc = { w: currentWeekStart, d, s }; openPanel = null; renderWeekGrid(); }
   function cancelSwap() { swapSrc = null; renderWeekGrid(); }
   function doSwap(t) {
@@ -761,10 +920,8 @@
     ensureWeek(a.w); ensureWeek(t.w);
     const mA = state.weeks[a.w][a.d][a.s], mB = state.weeks[t.w][t.d][t.s];
     const iA = Object.assign({}, getInfo(a.w, a.d, a.s)), iB = Object.assign({}, getInfo(t.w, t.d, t.s));
-    state.weeks[a.w][a.d][a.s] = mB;
-    state.weeks[t.w][t.d][t.s] = mA;
-    setInfo(a.w, a.d, a.s, iB);
-    setInfo(t.w, t.d, t.s, iA);
+    state.weeks[a.w][a.d][a.s] = mB; state.weeks[t.w][t.d][t.s] = mA;
+    setInfo(a.w, a.d, a.s, iB); setInfo(t.w, t.d, t.s, iA);
     swapSrc = null;
     renderAll();
     save(['weeks/' + a.w, 'weeks/' + t.w, 'info/' + a.w, 'info/' + t.w], 'Comidas intercambiadas');
@@ -773,8 +930,7 @@
   /* ---------- Menús reutilizables ---------- */
   function weekHasContent(days) { return DAYS.some(d => SLOTS.some(s => days[d] && days[d][s])); }
   function fillWeekFrom(days, msg) {
-    const iso = currentWeekStart, a = W();
-    const paths = ['weeks/' + iso, 'info/' + iso];
+    const iso = currentWeekStart, a = W(), paths = ['weeks/' + iso, 'info/' + iso];
     DAYS.forEach(d => SLOTS.forEach(s => {
       let m = cleanText(days[d] && days[d][s]);
       if (m) { const r = ensureMeal(m); m = r.name; if (r.added) paths.push('meals'); }
@@ -787,76 +943,76 @@
   function copyPrevWeek() {
     const prev = addDaysISO(currentWeekStart, -7);
     ensureWeek(prev);
-    if (!weekHasContent(state.weeks[prev])) { showStatus('La semana anterior está vacía', false); return; }
+    if (!weekHasContent(state.weeks[prev])) { showStatus('La semana anterior está vacía', true); return; }
     if (weekHasContent(W()) && !confirm('Se sustituirán las comidas de esta semana por las de la semana anterior. ¿Continuar?')) return;
     fillWeekFrom(state.weeks[prev], 'Semana anterior copiada');
   }
   function saveTemplate() {
-    if (!weekHasContent(W())) { showStatus('La semana está vacía', false); return; }
+    if (!weekHasContent(W())) { showStatus('La semana está vacía', true); return; }
     const name = cleanText(prompt('Nombre del menú:'));
     if (!name) return;
     const days = {};
     DAYS.forEach(d => { days[d] = {}; SLOTS.forEach(s => days[d][s] = W()[d][s] || ''); });
     const id = uid();
     state.templates[id] = { name, days };
-    renderTemplates();
-    document.getElementById('tplSelect').value = id;
+    renderTemplates(); renderSettings();
+    $('tplSelect').value = id;
     save(['templates/' + id], `Menú "${name}" guardado`);
   }
   function applyTemplate() {
-    const id = document.getElementById('tplSelect').value;
-    const t = state.templates[id];
-    if (!t) { showStatus('Elige un menú', false); return; }
+    const t = state.templates[$('tplSelect').value];
+    if (!t) { showStatus('Elige un menú', true); return; }
     if (weekHasContent(W()) && !confirm(`Se sustituirán las comidas de esta semana por el menú "${t.name}". ¿Continuar?`)) return;
     fillWeekFrom(t.days || {}, `Menú "${t.name}" aplicado`);
   }
-  function deleteTemplate() {
-    const id = document.getElementById('tplSelect').value;
-    const t = state.templates[id];
-    if (!t) return;
+  function templateIds() {
+    return Object.keys(state.templates).filter(id => state.templates[id] && state.templates[id].name)
+      .sort((a, b) => cmp(state.templates[a].name, state.templates[b].name));
+  }
+  function renameTemplate(id) {
+    const t = state.templates[id]; if (!t) return;
+    const name = cleanText(prompt('Nuevo nombre del menú:', t.name));
+    if (!name || name === t.name) return;
+    t.name = name;
+    renderTemplates(); renderSettings();
+    save(['templates/' + id], 'Menú renombrado');
+  }
+  function deleteTemplate(id) {
+    const t = state.templates[id]; if (!t) return;
     if (!confirm(`¿Borrar el menú "${t.name}"?`)) return;
     delete state.templates[id];
-    renderTemplates();
+    renderTemplates(); renderSettings();
     save(['templates/' + id], 'Menú borrado');
   }
   function renderTemplates() {
-    const sel = document.getElementById('tplSelect');
-    const prev = sel.value;
+    const sel = $('tplSelect'), prev = sel.value;
     sel.innerHTML = '';
-    const ids = Object.keys(state.templates).filter(id => state.templates[id] && state.templates[id].name)
-      .sort((a, b) => cmp(state.templates[a].name, state.templates[b].name));
-    if (!ids.length) {
-      const o = el('option', null, 'Sin menús guardados'); o.value = ''; sel.appendChild(o);
-    } else {
-      ids.forEach(id => { const o = el('option', null, state.templates[id].name); o.value = id; sel.appendChild(o); });
-      if (ids.includes(prev)) sel.value = prev;
-    }
+    const ids = templateIds();
+    if (!ids.length) { const o = el('option', null, 'Sin menús guardados'); o.value = ''; sel.appendChild(o); }
+    else { ids.forEach(id => { const o = el('option', null, state.templates[id].name); o.value = id; sel.appendChild(o); }); if (ids.includes(prev)) sel.value = prev; }
   }
 
-  /* ---------- Render principal ---------- */
-  function renderWeekLabel() { document.getElementById('weekLabel').textContent = formatWeekLabel(currentWeekStart); }
+  /* ---------- Vistas de planificación ---------- */
+  function renderWeekLabel() { $('weekLabel').textContent = formatWeekLabel(currentWeekStart); }
   function renderWeekGrid() {
-    document.getElementById('swapBanner').style.display = swapSrc ? 'flex' : 'none';
-    const grid = document.getElementById('weekGrid');
-    grid.innerHTML = '';
+    $('swapBanner').style.display = swapSrc ? 'flex' : 'none';
+    const grid = $('weekGrid'); grid.innerHTML = '';
+    const t = todayRef();
     DAYS.forEach((d, i) => {
       const card = el('div', 'day-card');
-      card.appendChild(el('div', 'day-header', dayDateLabel(i)));
+      card.appendChild(el('div', 'day-header' + (t.iso === currentWeekStart && t.day === d ? ' today' : ''), dayDateLabel(i)));
       SLOTS.forEach(s => card.appendChild(buildSlotRow(d, s)));
       grid.appendChild(card);
     });
   }
   function renderWeekTable() {
-    const a = W();
-    const table = document.getElementById('weekTable');
+    const a = W(), table = $('weekTable');
     table.innerHTML = '';
-    const hr = el('tr');
-    hr.appendChild(el('th', null, 'Comida'));
+    const hr = el('tr'); hr.appendChild(el('th', null, ''));
     DAYS.forEach((d, i) => { const dt = new Date(addDaysISO(currentWeekStart, i) + 'T00:00:00'); hr.appendChild(el('th', null, `${d.slice(0, 3)} ${dt.getDate()}`)); });
     table.appendChild(hr);
     SLOTS.forEach(s => {
-      const tr = el('tr');
-      tr.appendChild(el('td', null, s));
+      const tr = el('tr'); tr.appendChild(el('td', null, s));
       DAYS.forEach(d => { const v = a[d][s]; tr.appendChild(v ? el('td', null, v) : el('td', 'empty-cell', '—')); });
       table.appendChild(tr);
     });
@@ -864,12 +1020,10 @@
 
   /* ---------- Comidas ---------- */
   function addMealFromTab() {
-    const input = document.getElementById('newMealInput');
-    const val = cleanText(input.value);
+    const input = $('newMealInput'), val = cleanText(input.value);
     if (!val) return;
-    if (findMeal(val)) { showStatus('Ya está en la lista', false); return; }
-    state.meals.push(val);
-    input.value = '';
+    if (findMeal(val)) { showStatus('Ya está en la lista', true); return; }
+    state.meals.push(val); input.value = '';
     renderMealList();
     save(['meals'], 'Añadida');
   }
@@ -877,17 +1031,12 @@
     const newName = cleanText(newRaw);
     if (!newName || newName === oldName) { editingMeal = null; renderMealList(); return; }
     const clash = findMeal(newName);
-    if (clash && clash !== oldName) { showStatus('Ya existe una comida con ese nombre', false); return; }
+    if (clash && clash !== oldName) { showStatus('Ya existe una comida con ese nombre', true); return; }
     const idx = state.meals.indexOf(oldName);
     if (idx === -1) { editingMeal = null; renderMealList(); return; }
     state.meals[idx] = newName;
-    Object.keys(state.weeks).forEach(w => DAYS.forEach(d => SLOTS.forEach(s => {
-      if (state.weeks[w] && state.weeks[w][d] && state.weeks[w][d][s] === oldName) state.weeks[w][d][s] = newName;
-    })));
-    Object.keys(state.templates).forEach(id => {
-      const t = state.templates[id];
-      if (t && t.days) DAYS.forEach(d => SLOTS.forEach(s => { if (t.days[d] && t.days[d][s] === oldName) t.days[d][s] = newName; }));
-    });
+    Object.keys(state.weeks).forEach(w => DAYS.forEach(d => SLOTS.forEach(s => { if (state.weeks[w] && state.weeks[w][d] && state.weeks[w][d][s] === oldName) state.weeks[w][d][s] = newName; })));
+    Object.keys(state.templates).forEach(id => { const t = state.templates[id]; if (t && t.days) DAYS.forEach(d => SLOTS.forEach(s => { if (t.days[d] && t.days[d][s] === oldName) t.days[d][s] = newName; })); });
     const pe = pmEntry(oldName, false);
     if (pe) {
       const target = state.pantryMeals.find(x => x !== pe && norm(x.name) === norm(newName));
@@ -905,8 +1054,7 @@
     save(['meals'], 'Quitada de la lista');
   }
   function renderMealList() {
-    const c = document.getElementById('mealItems');
-    c.innerHTML = '';
+    const c = $('mealItems'); c.innerHTML = '';
     if (!state.meals.length) { c.appendChild(el('div', 'empty-note', 'Sin comidas todavía. Añade alguna arriba o escríbela directamente en un día.')); return; }
     const stats = computeStats();
     state.meals.slice().sort(cmp).forEach(meal => {
@@ -915,17 +1063,13 @@
         const input = el('input', 'text-input'); input.type = 'text'; input.value = meal;
         const ok = el('button', 'link-btn', 'Guardar'); ok.onclick = () => renameMeal(meal, input.value);
         const no = el('button', 'link-btn danger', 'Cancelar'); no.onclick = () => { editingMeal = null; renderMealList(); };
-        input.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') renameMeal(meal, input.value);
-          if (e.key === 'Escape') { editingMeal = null; renderMealList(); }
-        });
+        input.addEventListener('keydown', (e) => { if (e.key === 'Enter') renameMeal(meal, input.value); if (e.key === 'Escape') { editingMeal = null; renderMealList(); } });
         row.append(input, ok, no);
         setTimeout(() => input.focus(), 0);
       } else {
         const g = el('div', 'grow');
         g.appendChild(el('div', null, meal));
-        const meta = mealMeta(meal, stats);
-        if (meta) g.appendChild(el('div', 'sub', meta));
+        const meta = mealMeta(meal, stats); if (meta) g.appendChild(el('div', 'sub', meta));
         const ed = el('button', 'link-btn', 'Editar'); ed.onclick = () => { editingMeal = meal; renderMealList(); };
         const del = el('button', 'link-btn danger', 'Quitar'); del.onclick = () => removeMeal(meal);
         row.append(g, ed, del);
@@ -934,31 +1078,31 @@
     });
   }
 
-  /* ---------- Lista de la compra ---------- */
+  /* ---------- Compra ---------- */
   function addToShopping(name, qty, silent) {
     name = cleanText(name); qty = cleanText(qty);
     if (!name) return false;
-    if (state.shopping.some(x => !x.done && norm(x.name) === norm(name))) { if (!silent) showStatus('Ya está en la lista', false); return false; }
+    if (state.shopping.some(x => !x.done && norm(x.name) === norm(name))) { if (!silent) showStatus('Ya está en la lista', true); return false; }
     state.shopping.push({ id: uid(), name, qty, done: false });
     const newProd = ensureProduct(name);
-    renderShopping();
+    renderShopping(); renderDashboard();
     save(newProd ? ['shopping', 'products'] : ['shopping'], `"${name}" añadido a la compra`);
     return true;
   }
   function renderShopping() {
-    const c = document.getElementById('shopItems');
-    c.innerHTML = '';
+    const pending = state.shopping.filter(x => !x.done).length;
+    $('shopBadge').textContent = pending ? String(pending) : '';
+    const c = $('shopItems'); c.innerHTML = '';
     if (!state.shopping.length) { c.appendChild(el('div', 'empty-note', 'La lista de la compra está vacía.')); return; }
-    const items = state.shopping.filter(x => !x.done).concat(state.shopping.filter(x => x.done));
-    items.forEach(it => {
+    state.shopping.filter(x => !x.done).concat(state.shopping.filter(x => x.done)).forEach(it => {
       const row = el('div', 'list-item' + (it.done ? ' done' : ''));
       const cb = el('input'); cb.type = 'checkbox'; cb.checked = !!it.done;
-      cb.onchange = () => { it.done = cb.checked; renderShopping(); save(['shopping'], it.done ? 'Comprado' : 'Pendiente'); };
+      cb.onchange = () => { it.done = cb.checked; renderShopping(); renderDashboard(); save(['shopping'], it.done ? 'Comprado' : 'Pendiente'); };
       const g = el('div', 'grow');
       g.appendChild(el('span', null, it.name));
       if (it.qty) g.appendChild(el('span', 'sub', '  ' + it.qty));
-      const del = el('button', 'link-btn danger', '×'); del.title = 'Quitar';
-      del.onclick = () => { state.shopping = state.shopping.filter(x => x !== it); renderShopping(); save(['shopping'], 'Quitado'); };
+      const del = el('button', 'icon-button'); del.title = 'Quitar'; del.appendChild(icon('close'));
+      del.onclick = () => { state.shopping = state.shopping.filter(x => x !== it); renderShopping(); renderDashboard(); save(['shopping'], 'Quitado'); };
       row.append(cb, g, del);
       c.appendChild(row);
     });
@@ -966,13 +1110,11 @@
 
   /* ---------- Despensa ---------- */
   function renderPantry() {
-    const c = document.getElementById('pmItems');
-    c.innerHTML = '';
+    const c = $('pmItems'); c.innerHTML = '';
     const pms = state.pantryMeals.filter(e => (e.frigo || 0) + (e.congelador || 0) > 0).sort((a, b) => cmp(a.name, b.name));
     if (!pms.length) c.appendChild(el('div', 'empty-note', 'No hay sobras guardadas.'));
     pms.forEach(e => {
-      const row = el('div', 'list-item');
-      const g = el('div', 'grow');
+      const row = el('div', 'list-item'), g = el('div', 'grow');
       g.appendChild(el('div', null, e.name));
       const chips = el('div', 'stock-chips');
       Object.keys(LOCS).forEach(loc => {
@@ -980,54 +1122,42 @@
         const other = loc === 'frigo' ? 'congelador' : 'frigo';
         const chip = el('span', 'stock-chip', `${LOCS[loc]}: ${fmtTw(e[loc])}`);
         const mv = el('button', 'link-btn', '→ ' + LOCS[other]);
-        mv.onclick = () => { const q = e[loc]; pmAdjust(e.name, loc, -q); pmAdjust(e.name, other, q); renderPantry(); renderWeekGrid(); save(['pantryMeals'], `Movido a ${LOCS[other].toLowerCase()}`); };
+        mv.onclick = () => { const q = e[loc]; pmAdjust(e.name, loc, -q); pmAdjust(e.name, other, q); renderPantry(); renderWeekGrid(); renderDashboard(); save(['pantryMeals'], `Movido a ${LOCS[other].toLowerCase()}`); };
         const eat = el('button', 'link-btn danger', 'Consumido');
-        eat.onclick = () => { pmAdjust(e.name, loc, -e[loc]); renderPantry(); renderWeekGrid(); save(['pantryMeals'], 'Retirado de la despensa'); };
+        eat.onclick = () => { pmAdjust(e.name, loc, -e[loc]); renderPantry(); renderWeekGrid(); renderDashboard(); save(['pantryMeals'], 'Retirado de la despensa'); };
         chip.append(mv, eat);
         chips.appendChild(chip);
       });
-      g.appendChild(chips);
-      row.appendChild(g);
-      c.appendChild(row);
+      g.appendChild(chips); row.appendChild(g); c.appendChild(row);
     });
-
-    const p = document.getElementById('ppItems');
-    p.innerHTML = '';
+    const p = $('ppItems'); p.innerHTML = '';
     const order = { despensa: 0, frigo: 1, congelador: 2 };
-    const pps = state.pantryProducts.slice().sort((a, b) => (order[a.loc] - order[b.loc]) || cmp(a.name, b.name));
+    const pps = state.pantryProducts.slice().sort((a, b) => ((order[a.loc] || 0) - (order[b.loc] || 0)) || cmp(a.name, b.name));
     if (!pps.length) p.appendChild(el('div', 'empty-note', 'No hay productos registrados.'));
     pps.forEach(it => {
-      const row = el('div', 'list-item');
-      const g = el('div', 'grow');
+      const row = el('div', 'list-item'), g = el('div', 'grow');
       g.appendChild(el('span', null, it.name));
       g.appendChild(el('span', 'sub', '  ' + [it.qty, PLOCS[it.loc] || 'Despensa'].filter(Boolean).join(' · ')));
-      const toShop = el('button', 'link-btn', 'A la compra');
-      toShop.onclick = () => addToShopping(it.name, '');
+      const toShop = el('button', 'link-btn', 'A la compra'); toShop.onclick = () => addToShopping(it.name, '');
       const del = el('button', 'link-btn danger', 'Quitar');
       del.onclick = () => { state.pantryProducts = state.pantryProducts.filter(x => x !== it); renderPantry(); save(['pantryProducts'], 'Producto quitado'); };
-      row.append(g, toShop, del);
-      p.appendChild(row);
+      row.append(g, toShop, del); p.appendChild(row);
     });
   }
   function addPantryMeal() {
-    const inp = document.getElementById('pmName');
-    const name = cleanText(inp.value);
+    const inp = $('pmName'), name = cleanText(inp.value);
     if (!name) return;
-    const tw = parseInt(document.getElementById('pmAmount').value, 10);
-    const loc = document.getElementById('pmLoc').value;
-    const r = ensureMeal(name);
-    pmAdjust(r.name, loc, tw);
-    inp.value = '';
-    renderPantry(); renderWeekGrid();
+    const tw = parseInt($('pmAmount').value, 10), loc = $('pmLoc').value, r = ensureMeal(name);
+    pmAdjust(r.name, loc, tw); inp.value = '';
+    renderPantry(); renderWeekGrid(); renderDashboard();
     save(r.added ? ['pantryMeals', 'meals'] : ['pantryMeals'], `${fmtTw(tw)} de ${r.name} en ${LOCS[loc].toLowerCase()}`);
   }
   function addPantryProduct() {
-    const inp = document.getElementById('ppName'), q = document.getElementById('ppQty');
-    const name = cleanText(inp.value);
+    const inp = $('ppName'), q = $('ppQty'), name = cleanText(inp.value);
     if (!name) return;
-    const loc = document.getElementById('ppLoc').value;
+    const loc = $('ppLoc').value;
     const ex = state.pantryProducts.find(x => norm(x.name) === norm(name) && x.loc === loc);
-    if (ex) { ex.qty = cleanText(q.value) || ex.qty; }
+    if (ex) ex.qty = cleanText(q.value) || ex.qty;
     else state.pantryProducts.push({ id: uid(), name, qty: cleanText(q.value), loc });
     const newProd = ensureProduct(name);
     inp.value = ''; q.value = '';
@@ -1037,134 +1167,300 @@
 
   /* ---------- Ranking ---------- */
   function renderRanking() {
-    const c = document.getElementById('rankContent');
-    c.innerHTML = '';
-    const all = Object.values(computeStats());
-    const rated = all.filter(x => x.n).sort((a, b) => (b.sum / b.n - a.sum / a.n) || (b.n - a.n) || cmp(a.name, b.name));
-    const unrated = all.filter(x => !x.n).sort((a, b) => (b.times - a.times) || cmp(a.name, b.name));
+    const c = $('rankContent'); c.innerHTML = '';
+    const stats = computeStats();
+    const rated = rankedList(stats);
+    const unrated = Object.values(stats).filter(x => !x.n).sort((a, b) => (b.times - a.times) || cmp(a.name, b.name));
     c.appendChild(el('h2', null, 'Comidas valoradas'));
-    if (!rated.length) c.appendChild(el('div', 'empty-note', 'Aún no hay valoraciones. Valora una comida con el botón ⋯ de su casilla.'));
+    if (!rated.length) c.appendChild(el('div', 'empty-note', 'Aún no hay valoraciones. Valora una comida con el botón ⋯ de su casilla o desde Inicio.'));
     else {
-      const wrap = el('div', 'table-scroll');
-      const t = el('table', 'rank-table');
-      const hr = el('tr');
+      const wrap = el('div', 'table-scroll'), t = el('table', 'rank-table'), hr = el('tr');
       ['#', 'Comida', 'Media', 'Valoraciones', 'Veces'].forEach(h => hr.appendChild(el('th', null, h)));
       t.appendChild(hr);
       rated.forEach((x, i) => {
-        const avg = x.sum / x.n, full = Math.round(avg);
-        const tr = el('tr');
+        const avg = x.sum / x.n, tr = el('tr');
         tr.appendChild(el('td', 'num', String(i + 1)));
         tr.appendChild(el('td', null, x.name));
-        const td = el('td', 'num');
-        td.appendChild(el('span', 'rank-stars', '★'.repeat(full) + '☆'.repeat(5 - full)));
-        td.appendChild(document.createTextNode(' ' + avg.toFixed(1)));
+        const td = el('td', 'num'); td.appendChild(el('span', 'rank-stars', starsText(avg))); td.appendChild(document.createTextNode(' ' + avg.toFixed(1)));
         tr.appendChild(td);
         tr.appendChild(el('td', 'num', String(x.n)));
         tr.appendChild(el('td', 'num', String(x.times)));
         t.appendChild(tr);
       });
-      wrap.appendChild(t);
-      c.appendChild(wrap);
+      wrap.appendChild(t); c.appendChild(wrap);
     }
     if (unrated.length) {
       c.appendChild(el('h2', null, 'Planificadas sin valorar'));
       const pnl = el('div', 'panel');
-      unrated.forEach(x => {
-        const row = el('div', 'list-item');
-        row.appendChild(el('span', 'grow', x.name));
-        row.appendChild(el('span', 'sub', `${x.times} ${x.times === 1 ? 'vez' : 'veces'}`));
-        pnl.appendChild(row);
-      });
+      unrated.forEach(x => { const row = el('div', 'list-item'); row.appendChild(el('span', 'grow', x.name)); row.appendChild(el('span', 'sub', `${x.times} ${x.times === 1 ? 'vez' : 'veces'}`)); pnl.appendChild(row); });
       c.appendChild(pnl);
     }
   }
 
-  /* ---------- Render global ---------- */
-  function renderPassive() { renderWeekLabel(); renderWeekTable(); renderShopping(); renderPantry(); renderRanking(); renderTemplates(); }
-  function renderAll() {
-    renderWeekLabel(); renderTemplates(); renderWeekGrid(); renderWeekTable();
-    renderMealList(); renderShopping(); renderPantry(); renderRanking();
+  /* ---------- Dashboard ---------- */
+  function dashCard(title, iconName) {
+    const c = el('div', 'card'), h = el('div', 'card-title');
+    h.append(icon(iconName), el('span', null, title));
+    c.appendChild(h);
+    return c;
+  }
+  function goTo(view) { setView(view); }
+  function renderDashboard() {
+    const c = $('dashContent'); if (!c) return;
+    c.innerHTML = '';
+    const t = todayRef(); ensureWeek(t.iso);
+
+    const c1 = dashCard(`Hoy · ${t.day} ${t.date.getDate()} ${MONTHS[t.date.getMonth()]}`, 'today');
+    SLOTS.forEach(s => {
+      const m = state.weeks[t.iso][t.day][s], info = getInfo(t.iso, t.day, s);
+      const row = el('div', 'dash-row'), left = el('div');
+      left.append(el('div', 'lbl', s), el('div', 'val' + (m ? '' : ' muted'), m || 'Sin planificar'));
+      row.appendChild(left);
+      if (m) {
+        const stars = el('div');
+        for (let i = 1; i <= 5; i++) { const b = el('button', 'star-btn sm', i <= (info.r || 0) ? '★' : '☆'); b.title = i + ' de 5'; b.onclick = () => setRatingAt(t.iso, t.day, s, info.r === i ? 0 : i); stars.appendChild(b); }
+        row.appendChild(stars);
+      }
+      c1.appendChild(row);
+    });
+    const a1 = el('div', 'card-actions'), b1 = el('button', 'link-btn', 'Ir a planificar');
+    b1.onclick = () => { currentWeekStart = t.iso; ensureWeek(currentWeekStart); goTo('plan'); };
+    a1.appendChild(b1); c1.appendChild(a1); c.appendChild(c1);
+
+    const countWeek = (iso) => { ensureWeek(iso); let n = 0; DAYS.forEach(d => SLOTS.forEach(s => { if (state.weeks[iso][d][s]) n++; })); return n; };
+    const total = DAYS.length * SLOTS.length, nThis = countWeek(t.iso), nNext = countWeek(addDaysISO(t.iso, 7));
+    const c2 = dashCard('Planificación', 'event_note');
+    c2.appendChild(el('div', 'big-number', `${nThis}/${total}`));
+    c2.appendChild(el('div', 'muted', 'comidas planificadas esta semana'));
+    const pr = el('div', 'progress'), bar = el('div'); bar.style.width = Math.round(nThis / total * 100) + '%'; pr.appendChild(bar); c2.appendChild(pr);
+    c2.appendChild(el('div', 'muted', `Semana siguiente: ${nNext}/${total}`));
+    const a2 = el('div', 'card-actions'), b2 = el('button', 'link-btn', 'Ver semana');
+    b2.onclick = () => { currentWeekStart = t.iso; ensureWeek(currentWeekStart); goTo('table'); };
+    a2.appendChild(b2); c2.appendChild(a2); c.appendChild(c2);
+
+    const c3 = dashCard('Sobras en el frigo', 'kitchen');
+    const fr = state.pantryMeals.filter(e => e.frigo > 0).sort((a, b) => cmp(a.name, b.name));
+    if (!fr.length) c3.appendChild(el('div', 'empty-note', 'No hay sobras en el frigo.'));
+    fr.forEach(e => { const row = el('div', 'dash-row'); row.append(el('span', 'val', e.name), el('span', 'muted', fmtTw(e.frigo) + ' ración')); c3.appendChild(row); });
+    const nCong = state.pantryMeals.filter(e => e.congelador > 0).length;
+    if (nCong) c3.appendChild(el('div', 'muted', `En el congelador: ${nCong} ${nCong === 1 ? 'comida' : 'comidas'}`));
+    const a3 = el('div', 'card-actions'), b3 = el('button', 'link-btn', 'Abrir despensa'); b3.onclick = () => goTo('pantry'); a3.appendChild(b3); c3.appendChild(a3);
+    c.appendChild(c3);
+
+    const c4 = dashCard('Lista de la compra', 'shopping_cart');
+    const pend = state.shopping.filter(x => !x.done);
+    c4.appendChild(el('div', 'big-number', String(pend.length)));
+    c4.appendChild(el('div', 'muted', pend.length === 1 ? 'artículo pendiente' : 'artículos pendientes'));
+    pend.slice(0, 5).forEach(x => { const row = el('div', 'dash-row'); row.append(el('span', 'val', x.name), el('span', 'muted', x.qty || '')); c4.appendChild(row); });
+    if (pend.length > 5) c4.appendChild(el('div', 'muted', `y ${pend.length - 5} más`));
+    const a4 = el('div', 'card-actions'), b4 = el('button', 'link-btn', 'Abrir lista'); b4.onclick = () => goTo('shop'); a4.appendChild(b4); c4.appendChild(a4);
+    c.appendChild(c4);
+
+    const c5 = dashCard('Las mejor valoradas', 'leaderboard');
+    const top = rankedList(computeStats()).slice(0, 3);
+    if (!top.length) c5.appendChild(el('div', 'empty-note', 'Aún no hay valoraciones.'));
+    top.forEach((x, i) => { const avg = x.sum / x.n, row = el('div', 'dash-row'); row.append(el('span', 'val', `${i + 1}. ${x.name}`), el('span', 'rank-stars', `${starsText(avg)} ${avg.toFixed(1)}`)); c5.appendChild(row); });
+    const a5 = el('div', 'card-actions'), b5 = el('button', 'link-btn', 'Ver ranking'); b5.onclick = () => goTo('rank'); a5.appendChild(b5); c5.appendChild(a5);
+    c.appendChild(c5);
   }
 
-  /* ---------- Pestañas, navegación, tema ---------- */
-  const VIEWS = { plan: 'viewPlan', table: 'viewTable', meals: 'viewMeals', shop: 'viewShop', pantry: 'viewPantry', rank: 'viewRank' };
-  function setTab(tab) {
-    currentTab = tab;
-    Object.keys(VIEWS).forEach(k => { document.getElementById(VIEWS[k]).style.display = (k === tab) ? '' : 'none'; });
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-    document.getElementById('weekNav').style.display = (tab === 'plan' || tab === 'table') ? '' : 'none';
-    if (tab === 'table') renderWeekTable();
-    if (tab === 'rank') renderRanking();
+  /* ---------- Perfil ---------- */
+  function avatarEl(cls, photo, name) {
+    if (photo) { const img = el('img', cls); img.src = photo; img.alt = ''; img.referrerPolicy = 'no-referrer'; return img; }
+    return el('span', cls, (name || '?').trim().charAt(0).toUpperCase());
+  }
+  function renderTopAvatar() {
+    const holder = $('avatarBtn'); holder.innerHTML = '';
+    const u = currentUser;
+    holder.appendChild(avatarEl('avatar', u && u.photoURL, u && (u.displayName || u.email)));
+  }
+  function renderProfile() {
+    const c = $('profileContent'); if (!c || !currentUser) return;
+    c.innerHTML = '';
+    const u = currentUser, me = state.members[u.uid] || {};
+    const card = el('div', 'card');
+    const head = el('div', 'profile-head');
+    head.appendChild(avatarEl('avatar big', u.photoURL, u.displayName || u.email));
+    const info = el('div');
+    info.append(el('div', 'profile-name', me.alias || u.displayName || 'Sin nombre'), el('div', 'muted', u.email || ''));
+    head.appendChild(info);
+    card.appendChild(head);
+    const row = el('div', 'add-row');
+    const alias = el('input', 'text-input'); alias.type = 'text'; alias.placeholder = 'Nombre que verán los demás'; alias.value = me.alias || ''; alias.style.flex = '1';
+    const ok = el('button', 'btn-tonal', 'Guardar nombre');
+    ok.onclick = () => {
+      if (!state.members[u.uid]) state.members[u.uid] = {};
+      state.members[u.uid].alias = cleanText(alias.value);
+      save(['members/' + u.uid], 'Nombre guardado');
+      renderProfile();
+    };
+    row.append(alias, ok);
+    card.appendChild(row);
+    const act = el('div', 'card-actions'), out = el('button', 'btn-outlined');
+    out.append(icon('logout'), el('span', null, 'Cerrar sesión'));
+    out.onclick = () => { if (confirm('¿Cerrar sesión?')) auth.signOut(); };
+    act.appendChild(out); card.appendChild(act);
+    c.appendChild(card);
+
+    const mine = computeStats(u.uid);
+    const nRated = Object.values(mine).reduce((acc, x) => acc + x.n, 0);
+    c.appendChild(el('h2', null, 'Tu actividad'));
+    const sc = el('div', 'card');
+    sc.appendChild(el('div', 'big-number', String(nRated)));
+    sc.appendChild(el('div', 'muted', nRated === 1 ? 'valoración hecha por ti' : 'valoraciones hechas por ti'));
+    const fav = rankedList(mine).slice(0, 3);
+    if (fav.length) {
+      sc.appendChild(el('h2', null, 'Tus mejor valoradas'));
+      fav.forEach(x => { const avg = x.sum / x.n, r = el('div', 'dash-row'); r.append(el('span', 'val', x.name), el('span', 'rank-stars', `${starsText(avg)} ${avg.toFixed(1)}`)); sc.appendChild(r); });
+    }
+    c.appendChild(sc);
+  }
+
+  /* ---------- Configuración ---------- */
+  function segmented(options, current, onChange) {
+    const s = el('div', 'segmented');
+    options.forEach(([val, label]) => { const b = el('button', current === val ? 'active' : '', label); b.onclick = () => onChange(val); s.appendChild(b); });
+    return s;
+  }
+  function renderSettings() {
+    const c = $('settingsContent'); if (!c || !currentUser) return;
+    c.innerHTML = '';
+
+    const s1 = el('div', 'card settings-section');
+    const h1 = el('div', 'card-title'); h1.append(icon('palette'), el('span', null, 'Apariencia')); s1.appendChild(h1);
+    s1.appendChild(el('p', 'settings-help', 'Tema de la aplicación en este dispositivo.'));
+    s1.appendChild(segmented([['auto', 'Automático'], ['light', 'Claro'], ['dark', 'Oscuro']], prefs.theme, (v) => { prefs.theme = v; savePrefs(); applyTheme(); renderSettings(); }));
+    c.appendChild(s1);
+
+    const s2 = el('div', 'card settings-section');
+    const h2 = el('div', 'card-title'); h2.append(icon('ac_unit'), el('span', null, 'Sobras')); s2.appendChild(h2);
+    s2.appendChild(el('p', 'settings-help', 'Ubicación propuesta por defecto al registrar una sobra (en este dispositivo).'));
+    s2.appendChild(segmented([['frigo', 'Frigo'], ['congelador', 'Congelador']], prefs.leftoverLoc, (v) => { prefs.leftoverLoc = v; panelLoc = v; savePrefs(); renderSettings(); }));
+    c.appendChild(s2);
+
+    const s3 = el('div', 'card settings-section');
+    const h3 = el('div', 'card-title'); h3.append(icon('bookmarks'), el('span', null, 'Menús guardados')); s3.appendChild(h3);
+    const ids = templateIds();
+    if (!ids.length) s3.appendChild(el('div', 'empty-note', 'No hay menús guardados. Se crean desde Planificar → Guardar como menú.'));
+    ids.forEach(id => {
+      const row = el('div', 'list-item');
+      row.appendChild(el('span', 'grow', state.templates[id].name));
+      const rn = el('button', 'link-btn', 'Renombrar'); rn.onclick = () => renameTemplate(id);
+      const del = el('button', 'link-btn danger', 'Borrar'); del.onclick = () => deleteTemplate(id);
+      row.append(rn, del); s3.appendChild(row);
+    });
+    c.appendChild(s3);
+
+    const s4 = el('div', 'card settings-section');
+    const h4 = el('div', 'card-title'); h4.append(icon('group'), el('span', null, 'Personas autorizadas')); s4.appendChild(h4);
+    s4.appendChild(el('p', 'settings-help', 'Solo estas cuentas de Google pueden entrar en la aplicación.'));
+    const myKey = encEmail(currentUser.email || '');
+    const byEmail = {};
+    Object.keys(state.members).forEach(id => { const m = state.members[id]; if (m && m.email) byEmail[m.email.toLowerCase()] = m; });
+    Object.keys(allowedList).filter(k => allowedList[k] === true).sort().forEach(k => {
+      const email = decEmail(k), m = byEmail[email];
+      const row = el('div', 'list-item');
+      row.appendChild(avatarEl('avatar', m && m.photo, (m && (m.alias || m.name)) || email));
+      const g = el('div', 'grow');
+      g.appendChild(el('div', null, (m && (m.alias || m.name)) || email));
+      g.appendChild(el('div', 'sub', email + (k === myKey ? ' · tú' : (m ? '' : ' · aún no ha entrado'))));
+      row.appendChild(g);
+      if (k !== myKey) {
+        const del = el('button', 'link-btn danger', 'Quitar');
+        del.onclick = () => {
+          if (!confirm(`¿Quitar el acceso a ${email}?`)) return;
+          allowedRef.child(k).remove().then(() => showStatus('Acceso retirado')).catch(() => showStatus('No se pudo retirar el acceso', true));
+        };
+        row.appendChild(del);
+      }
+      s4.appendChild(row);
+    });
+    const add = el('div', 'add-row'); add.style.marginTop = '8px';
+    const inp = el('input', 'text-input'); inp.type = 'email'; inp.placeholder = 'correo@gmail.com'; inp.style.flex = '1';
+    const btn = el('button', 'btn', 'Autorizar');
+    const doAdd = () => {
+      const e = inp.value.trim().toLowerCase();
+      if (!/^[^\s@#$\[\]\/]+@[^\s@#$\[\]\/]+\.[^\s@#$\[\]\/]+$/.test(e)) { showStatus('Correo no válido', true); return; }
+      allowedRef.child(encEmail(e)).set(true).then(() => { showStatus(`${e} autorizado`); inp.value = ''; }).catch(() => showStatus('No se pudo autorizar', true));
+    };
+    btn.onclick = doAdd;
+    inp.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') doAdd(); });
+    add.append(inp, btn);
+    s4.appendChild(add);
+    c.appendChild(s4);
+  }
+
+  /* ---------- Render global ---------- */
+  function renderPassive() { renderWeekLabel(); renderWeekTable(); renderShopping(); renderPantry(); renderRanking(); renderTemplates(); renderDashboard(); }
+  function renderAll() {
+    renderTopAvatar(); renderWeekLabel(); renderTemplates(); renderWeekGrid(); renderWeekTable();
+    renderMealList(); renderShopping(); renderPantry(); renderRanking(); renderDashboard(); renderProfile(); renderSettings();
+  }
+
+  /* ---------- Navegación ---------- */
+  function openDrawer(open) { $('drawer').classList.toggle('open', open); $('scrim').classList.toggle('show', open); }
+  function setView(view) {
+    if (!VIEW_TITLES[view]) view = 'dashboard';
+    currentView = view;
+    document.querySelectorAll('.view').forEach(v => { v.hidden = v.id !== 'view-' + view; });
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+    $('viewTitle').textContent = VIEW_TITLES[view];
+    const weekViews = view === 'plan' || view === 'table';
+    $('weekNav').hidden = !weekViews;
+    $('printBtn').hidden = !weekViews;
+    if (view !== 'plan') { swapSrc = null; }
+    if (view === 'plan') renderWeekGrid();
+    if (view === 'table') renderWeekTable();
+    if (view === 'rank') renderRanking();
+    if (view === 'dashboard') renderDashboard();
+    openDrawer(false);
+    window.scrollTo(0, 0);
   }
   function goToWeek(off) { currentWeekStart = addDaysISO(currentWeekStart, off); ensureWeek(currentWeekStart); openPanel = null; renderAll(); }
   function resetWeek() {
     if (!confirm('¿Vaciar esta semana? Se borran sus comidas y valoraciones. La lista de comidas y la despensa no se modifican.')) return;
     const iso = currentWeekStart;
-    state.weeks[iso] = emptyDays();
-    delete state.info[iso];
-    openPanel = null;
+    state.weeks[iso] = emptyDays(); delete state.info[iso]; openPanel = null;
     renderAll();
     save(['weeks/' + iso, 'info/' + iso], 'Semana vaciada');
   }
 
-  const THEME_ICON = { auto: '🌓', dark: '🌙', light: '☀️' };
-  const THEME_TITLE = { auto: 'Tema: automático', dark: 'Tema: oscuro', light: 'Tema: claro' };
-  function applyTheme(t) {
-    if (t === 'auto') document.documentElement.removeAttribute('data-theme');
-    else document.documentElement.setAttribute('data-theme', t);
-    const b = document.getElementById('themeBtn');
-    b.textContent = THEME_ICON[t]; b.title = THEME_TITLE[t];
-  }
-  let theme = 'auto';
-  try { theme = localStorage.getItem('planificador-tema') || 'auto'; } catch (e) {}
-  if (!THEME_ICON[theme]) theme = 'auto';
-  applyTheme(theme);
-  document.getElementById('themeBtn').onclick = () => {
-    const order = ['auto', 'dark', 'light'];
-    theme = order[(order.indexOf(theme) + 1) % order.length];
-    applyTheme(theme);
-    try { localStorage.setItem('planificador-tema', theme); } catch (e) {}
-    showStatus(THEME_TITLE[theme], true);
-  };
+  document.querySelectorAll('.nav-item').forEach(b => { b.onclick = () => setView(b.dataset.view); });
+  $('menuBtn').onclick = () => openDrawer(true);
+  $('scrim').onclick = () => openDrawer(false);
+  $('avatarBtn').onclick = () => setView('profile');
+  window.addEventListener('scroll', () => $('topBar').classList.toggle('scrolled', window.scrollY > 4));
+  $('prevWeekBtn').onclick = () => goToWeek(-7);
+  $('nextWeekBtn').onclick = () => goToWeek(7);
+  $('todayBtn').onclick = () => { currentWeekStart = getMondayISO(new Date()); ensureWeek(currentWeekStart); openPanel = null; renderAll(); };
+  $('resetBtn').onclick = resetWeek;
+  $('copyPrevBtn').onclick = copyPrevWeek;
+  $('saveTplBtn').onclick = saveTemplate;
+  $('applyTplBtn').onclick = applyTemplate;
+  $('cancelSwapBtn').onclick = cancelSwap;
+  $('addMealBtn').onclick = addMealFromTab;
+  $('newMealInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') addMealFromTab(); });
 
-  document.querySelectorAll('.tab-btn').forEach(b => { b.onclick = () => setTab(b.dataset.tab); });
-  document.getElementById('prevWeekBtn').onclick = () => goToWeek(-7);
-  document.getElementById('nextWeekBtn').onclick = () => goToWeek(7);
-  document.getElementById('resetBtn').onclick = resetWeek;
-  document.getElementById('copyPrevBtn').onclick = copyPrevWeek;
-  document.getElementById('saveTplBtn').onclick = saveTemplate;
-  document.getElementById('applyTplBtn').onclick = applyTemplate;
-  document.getElementById('delTplBtn').onclick = deleteTemplate;
-  document.getElementById('cancelSwapBtn').onclick = cancelSwap;
-  document.getElementById('addMealBtn').onclick = addMealFromTab;
-  document.getElementById('newMealInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') addMealFromTab(); });
-
-  const shopName = document.getElementById('shopName'), shopQty = document.getElementById('shopQty');
+  const shopName = $('shopName'), shopQty = $('shopQty');
   function shopAdd() { if (addToShopping(shopName.value, shopQty.value)) { shopName.value = ''; shopQty.value = ''; } }
   attachAutocomplete(shopName, productItems, () => shopQty.focus());
   shopName.addEventListener('keydown', (e) => { if (e.key === 'Enter') shopAdd(); });
   shopQty.addEventListener('keydown', (e) => { if (e.key === 'Enter') shopAdd(); });
-  document.getElementById('shopAddBtn').onclick = shopAdd;
-  document.getElementById('shopClearBtn').onclick = () => {
+  $('shopAddBtn').onclick = shopAdd;
+  $('shopClearBtn').onclick = () => {
     if (!state.shopping.some(x => x.done)) return;
     state.shopping = state.shopping.filter(x => !x.done);
-    renderShopping();
+    renderShopping(); renderDashboard();
     save(['shopping'], 'Comprados borrados');
   };
-
-  const pmName = document.getElementById('pmName'), ppName = document.getElementById('ppName');
-  attachAutocomplete(pmName, mealItems, () => {});
-  attachAutocomplete(ppName, productItems, () => document.getElementById('ppQty').focus());
-  pmName.addEventListener('keydown', (e) => { if (e.key === 'Enter') addPantryMeal(); });
-  ppName.addEventListener('keydown', (e) => { if (e.key === 'Enter') addPantryProduct(); });
-  document.getElementById('ppQty').addEventListener('keydown', (e) => { if (e.key === 'Enter') addPantryProduct(); });
-  document.getElementById('pmAddBtn').onclick = addPantryMeal;
-  document.getElementById('ppAddBtn').onclick = addPantryProduct;
-
-  document.getElementById('printBtn').onclick = () => { renderWeekTable(); window.print(); };
-
-  ensureWeek(currentWeekStart);
-  renderAll();
+  attachAutocomplete($('pmName'), mealItems, () => {});
+  attachAutocomplete($('ppName'), productItems, () => $('ppQty').focus());
+  $('pmName').addEventListener('keydown', (e) => { if (e.key === 'Enter') addPantryMeal(); });
+  $('ppName').addEventListener('keydown', (e) => { if (e.key === 'Enter') addPantryProduct(); });
+  $('ppQty').addEventListener('keydown', (e) => { if (e.key === 'Enter') addPantryProduct(); });
+  $('pmAddBtn').onclick = addPantryMeal;
+  $('ppAddBtn').onclick = addPantryProduct;
+  $('printBtn').onclick = () => { renderWeekTable(); window.print(); };
 </script>
 </body>
 </html>
