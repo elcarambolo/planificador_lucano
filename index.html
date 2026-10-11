@@ -25,269 +25,155 @@
     font-size: 15px;
     line-height: 1.4;
     padding: 12px;
-    max-width: 480px;
-    margin: 0 auto;
   }
-  h1 {
-    font-size: 19px;
-    font-weight: 600;
-    margin: 4px 0 14px;
+  .app { max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 19px; font-weight: 600; margin: 4px 0 14px; }
+  h2 { font-size: 14px; font-weight: 600; color: var(--text-muted); margin: 20px 0 8px; }
+
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 14px; align-items: stretch; }
+  .tab-btn {
+    flex: 1; padding: 8px 4px; background: none; border: none;
+    border-bottom: 2px solid transparent; color: var(--text-muted);
+    font-size: 14px; font-weight: 600; cursor: pointer;
   }
-  h2 {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin: 20px 0 8px;
-    text-transform: none;
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .print-btn {
+    background: none; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 4px 10px; font-size: 14px; color: var(--text); cursor: pointer; margin-bottom: 4px;
   }
+
   .week-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 6px 8px;
-    margin-bottom: 8px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 6px 8px; margin-bottom: 12px;
   }
   .week-nav button {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 6px 10px;
-    font-size: 14px;
-    cursor: pointer;
-    color: var(--text);
+    background: none; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 6px 12px; font-size: 14px; cursor: pointer; color: var(--text);
   }
-  .week-nav .week-label {
-    font-size: 13px;
-    font-weight: 600;
-    text-align: center;
-    flex: 1;
-  }
-  .day-card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    margin-bottom: 10px;
-    overflow: hidden;
-  }
+  .week-nav .week-label { font-size: 13px; font-weight: 600; text-align: center; flex: 1; }
+
+  #weekGrid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .day-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); }
   .day-header {
-    padding: 8px 12px;
-    font-weight: 600;
-    font-size: 14px;
-    background: #f2f2f2;
-    border-bottom: 1px solid var(--border);
+    padding: 8px 12px; font-weight: 600; font-size: 14px; background: #f2f2f2;
+    border-bottom: 1px solid var(--border); border-radius: var(--radius) var(--radius) 0 0;
   }
-  .slot-row {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--border);
-    gap: 8px;
-  }
+  .slot-row { display: flex; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--border); gap: 8px; }
   .slot-row:last-child { border-bottom: none; }
-  .slot-label {
-    width: 76px;
-    flex-shrink: 0;
-    font-size: 13px;
-    color: var(--text-muted);
+  .slot-label { width: 76px; flex-shrink: 0; font-size: 13px; color: var(--text-muted); }
+
+  .slot-input-wrap { position: relative; flex: 1; min-width: 0; }
+  .slot-input {
+    width: 100%; padding: 7px 28px 7px 8px; border: 1px solid var(--border);
+    border-radius: var(--radius); background: #fff; color: var(--text); font-size: 16px;
   }
-  .slot-select {
-    flex: 1;
-    min-width: 0;
-    padding: 6px 8px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: #fff;
-    color: var(--text);
-    font-size: 14px;
+  .slot-input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .slot-clear {
+    position: absolute; right: 2px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; font-size: 18px; line-height: 1;
+    color: var(--text-muted); padding: 4px 8px; cursor: pointer;
   }
-  .meal-list {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 8px;
+  .suggest {
+    position: absolute; left: 0; right: 0; top: 100%; margin-top: 2px;
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+    max-height: 220px; overflow-y: auto; z-index: 30; display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
   }
-  .meal-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 4px;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-  }
+  .suggest-item { padding: 9px 10px; font-size: 14px; border-bottom: 1px solid #eee; cursor: pointer; }
+  .suggest-item:last-child { border-bottom: none; }
+  .suggest-item.active, .suggest-item:hover { background: var(--accent-bg); }
+
+  .meal-panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px; max-width: 640px; }
+  .meal-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 4px; border-bottom: 1px solid #eee; font-size: 14px; }
   .meal-item:last-child { border-bottom: none; }
-  .meal-item button {
-    background: none;
-    border: none;
-    color: var(--danger);
-    font-size: 13px;
-    padding: 2px 6px;
-    cursor: pointer;
+  .meal-item .meal-name { flex: 1; min-width: 0; word-break: break-word; }
+  .meal-item input { flex: 1; min-width: 0; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 16px; }
+  .link-btn { background: none; border: none; font-size: 13px; padding: 4px 6px; cursor: pointer; color: var(--accent); }
+  .link-btn.danger { color: var(--danger); }
+  .add-meal-row { display: flex; gap: 6px; margin-bottom: 8px; }
+  .add-meal-row input { flex: 1; min-width: 0; padding: 7px 8px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 16px; }
+  .btn { padding: 7px 12px; border: 1px solid var(--accent); background: var(--accent); color: #fff; border-radius: var(--radius); font-size: 14px; cursor: pointer; }
+  .btn-secondary { background: transparent; color: var(--text-muted); border-color: var(--border); font-size: 12px; padding: 6px 10px; margin-top: 16px; }
+  .empty-note { color: var(--text-muted); font-size: 13px; padding: 6px 4px; }
+  .status { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 14px; min-height: 16px; }
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); }
+  .week-table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  .week-table th, .week-table td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; white-space: nowrap; }
+  .week-table th { background: #f2f2f2; font-weight: 600; }
+  .week-table th:first-child, .week-table td:first-child { position: sticky; left: 0; background: #f2f2f2; font-weight: 600; z-index: 1; }
+  .week-table td.empty-cell { color: var(--text-muted); }
+
+  @media (min-width: 720px) {
+    body { padding: 20px; }
+    h1 { font-size: 22px; }
+    #weekGrid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    .slot-row { flex-direction: column; align-items: stretch; gap: 4px; }
+    .slot-label { width: auto; }
+    .slot-input, .meal-item input, .add-meal-row input { font-size: 14px; }
+    .week-table { font-size: 14px; }
+    .week-table th, .week-table td { white-space: normal; }
+    .week-nav { max-width: 520px; }
   }
-  .add-meal-row {
-    display: flex;
-    gap: 6px;
-    margin-top: 8px;
-  }
-  .add-meal-row input {
-    flex: 1;
-    padding: 7px 8px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    font-size: 14px;
-  }
-  .btn {
-    padding: 7px 12px;
-    border: 1px solid var(--accent);
-    background: var(--accent);
-    color: #fff;
-    border-radius: var(--radius);
-    font-size: 14px;
-    cursor: pointer;
-  }
-  .btn-secondary {
-    background: transparent;
-    color: var(--text-muted);
-    border-color: var(--border);
-    font-size: 12px;
-    padding: 6px 10px;
-    margin-top: 16px;
-  }
-  .empty-note {
-    color: var(--text-muted);
-    font-size: 13px;
-    padding: 6px 4px;
-  }
-  .status {
-    font-size: 12px;
-    color: var(--text-muted);
-    text-align: center;
-    margin-top: 14px;
-    min-height: 16px;
-  }
-  .tabs {
-    display: flex;
-    gap: 4px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 14px;
-  }
-  .tab-btn {
-    flex: 1;
-    padding: 8px 4px;
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--text-muted);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .tab-btn.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
-  .table-scroll {
-    overflow-x: auto;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-  }
-  .week-table {
-    border-collapse: collapse;
-    width: 100%;
-    font-size: 12px;
-  }
-  .week-table th, .week-table td {
-    border: 1px solid var(--border);
-    padding: 6px 8px;
-    text-align: left;
-    white-space: nowrap;
-  }
-  .week-table th {
-    background: #f2f2f2;
-    font-weight: 600;
-    position: sticky;
-    top: 0;
-  }
-  .week-table th:first-child, .week-table td:first-child {
-    position: sticky;
-    left: 0;
-    background: #f2f2f2;
-    font-weight: 600;
-    z-index: 1;
-  }
-  .week-table td.empty-cell {
-    color: var(--text-muted);
-  }
-  .print-btn {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 6px 10px;
-    font-size: 13px;
-    color: var(--text);
-    cursor: pointer;
-  }
+
   @media print {
-    .tabs, .meal-list, .add-meal-row, .btn, .btn-secondary, .status,
-    #viewPlan, .week-nav button, .print-btn {
+    .tabs, .btn, .btn-secondary, .status, #viewPlan, #viewMeals, .week-nav button, .print-btn {
       display: none !important;
     }
     #viewTable { display: block !important; }
-    .week-nav {
-      border: none;
-      justify-content: center;
-      padding: 0 0 8px;
-    }
+    .week-nav { border: none; justify-content: center; padding: 0 0 8px; max-width: none; }
     .week-nav .week-label { font-size: 16px; }
     .table-scroll { overflow: visible; border: none; }
     .week-table { font-size: 13px; }
     .week-table th, .week-table td { white-space: normal; }
-    body { max-width: none; padding: 0; }
+    body { padding: 0; }
+    .app { max-width: none; }
   }
 </style>
 </head>
 <body>
+<div class="app">
 
   <h1>Planificador de comidas</h1>
 
   <div class="tabs">
     <button class="tab-btn active" id="tabPlanBtn">Planificar</button>
     <button class="tab-btn" id="tabViewBtn">Vista semanal</button>
+    <button class="tab-btn" id="tabMealsBtn">Comidas</button>
     <button class="print-btn" id="printBtn" title="Imprimir / PDF">🖨️</button>
   </div>
 
-  <div class="week-nav">
+  <div class="week-nav" id="weekNav">
     <button id="prevWeekBtn">←</button>
     <div class="week-label" id="weekLabel"></div>
     <button id="nextWeekBtn">→</button>
   </div>
 
   <div id="viewPlan">
-    <h2>Lista de comidas</h2>
-    <div class="meal-list">
-      <div id="mealItems"></div>
-      <div class="add-meal-row">
-        <input type="text" id="newMealInput" placeholder="Añadir comida (ej. Lentejas)">
-        <button class="btn" id="addMealBtn">Añadir</button>
-      </div>
-    </div>
-
-    <h2>Semana</h2>
     <div id="weekGrid"></div>
-
     <button class="btn btn-secondary" id="resetBtn">Vaciar esta semana</button>
   </div>
 
   <div id="viewTable" style="display:none;">
-    <h2>Semana de un vistazo</h2>
     <div class="table-scroll">
       <table class="week-table" id="weekTable"></table>
     </div>
   </div>
 
+  <div id="viewMeals" style="display:none;">
+    <h2>Lista de comidas</h2>
+    <div class="meal-panel">
+      <div class="add-meal-row">
+        <input type="text" id="newMealInput" placeholder="Añadir comida (ej. Lentejas)">
+        <button class="btn" id="addMealBtn">Añadir</button>
+      </div>
+      <div id="mealItems"></div>
+    </div>
+  </div>
+
   <div class="status" id="statusMsg"></div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -302,21 +188,23 @@
     messagingSenderId: "1037563537852",
     appId: "1:1037563537852:web:8fce3242ea7bd41b4a63b9"
   };
-  // ====================================================================================
+  // =======================================
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
   const dbRef = db.ref('planificador-comidas');
 </script>
 <script>
   const DAYS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
-  const SLOTS = ['Desayuno','Almuerzo','Cena'];
+  const SLOTS = ['Almuerzo','Cena'];
   const MONTHS = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 
-  // state.meals: lista global de comidas, persiste siempre.
-  // state.weeks: { "YYYY-MM-DD" (lunes de esa semana): { Lunes: {Desayuno:'',...}, ... } }
+  // state.meals: catálogo global y acumulativo de comidas.
+  // state.weeks: { "YYYY-MM-DD" (lunes): { Lunes: {Almuerzo:'', Cena:''}, ... } }
   let state = { meals: [], weeks: {} };
   let currentWeekStart = getMondayISO(new Date());
+  let editingMeal = null;
 
+  /* ---------- Fechas ---------- */
   function getMondayISO(date) {
     const d = new Date(date);
     const day = d.getDay();
@@ -325,56 +213,56 @@
     d.setHours(0,0,0,0);
     return isoDateStr(d);
   }
-
   function isoDateStr(d) {
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,'0');
-    const day = String(d.getDate()).padStart(2,'0');
-    return `${y}-${m}-${day}`;
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
-
   function addDaysISO(iso, days) {
     const d = new Date(iso + 'T00:00:00');
     d.setDate(d.getDate() + days);
     return isoDateStr(d);
   }
+  function formatWeekLabel(mondayIso) {
+    const monday = new Date(mondayIso + 'T00:00:00');
+    const sunday = new Date(addDaysISO(mondayIso, 6) + 'T00:00:00');
+    return `${monday.getDate()} ${MONTHS[monday.getMonth()]} – ${sunday.getDate()} ${MONTHS[sunday.getMonth()]} ${sunday.getFullYear()}`;
+  }
+  function dayDateLabel(dayIndex) {
+    const d = new Date(addDaysISO(currentWeekStart, dayIndex) + 'T00:00:00');
+    return `${DAYS[dayIndex]} ${d.getDate()}`;
+  }
 
+  /* ---------- Datos ---------- */
   function emptyAssignments() {
     const a = {};
     DAYS.forEach(d => { a[d] = {}; SLOTS.forEach(s => a[d][s] = ''); });
     return a;
   }
-
   function ensureWeek(iso) {
-    if (!state.weeks[iso]) {
-      state.weeks[iso] = emptyAssignments();
-    } else {
-      DAYS.forEach(d => {
-        if (!state.weeks[iso][d]) state.weeks[iso][d] = {};
-        SLOTS.forEach(s => { if (!(s in state.weeks[iso][d])) state.weeks[iso][d][s] = ''; });
-      });
-    }
+    if (!state.weeks[iso]) state.weeks[iso] = emptyAssignments();
+    DAYS.forEach(d => {
+      if (!state.weeks[iso][d]) state.weeks[iso][d] = {};
+      SLOTS.forEach(s => { if (!(s in state.weeks[iso][d])) state.weeks[iso][d][s] = ''; });
+    });
   }
-
   function currentAssignments() {
     ensureWeek(currentWeekStart);
     return state.weeks[currentWeekStart];
   }
-
+  function applyRemote(parsed) {
+    state.meals = Array.isArray(parsed.meals) ? parsed.meals.filter(Boolean) : [];
+    state.weeks = parsed.weeks && typeof parsed.weeks === 'object' ? parsed.weeks : {};
+    ensureWeek(currentWeekStart);
+  }
   async function loadState() {
     try {
       const snapshot = await dbRef.once('value');
       const parsed = snapshot.val();
-      if (parsed) {
-        state.meals = Array.isArray(parsed.meals) ? parsed.meals : [];
-        state.weeks = parsed.weeks && typeof parsed.weeks === 'object' ? parsed.weeks : {};
-      }
+      if (parsed) applyRemote(parsed);
     } catch (e) {
       showStatus('No se pudo conectar con la base de datos', false);
     }
     ensureWeek(currentWeekStart);
   }
-
   let isSavingLocally = false;
   async function saveState(msg) {
     try {
@@ -387,16 +275,16 @@
       setTimeout(() => { isSavingLocally = false; }, 300);
     }
   }
-
-  // Escucha cambios de las otras personas en tiempo real y refresca la vista.
+  function isTyping() {
+    const el = document.activeElement;
+    return el && el.tagName === 'INPUT';
+  }
   dbRef.on('value', (snapshot) => {
     if (isSavingLocally) return;
     const parsed = snapshot.val();
     if (!parsed) return;
-    state.meals = Array.isArray(parsed.meals) ? parsed.meals : [];
-    state.weeks = parsed.weeks && typeof parsed.weeks === 'object' ? parsed.weeks : {};
-    ensureWeek(currentWeekStart);
-    renderAll();
+    applyRemote(parsed);
+    if (isTyping()) { renderWeekLabel(); renderWeekTable(); } else { renderAll(); }
   });
 
   let statusTimer = null;
@@ -405,52 +293,181 @@
     el.textContent = text;
     el.style.color = ok === false ? '#b3441e' : '#6b6b6b';
     clearTimeout(statusTimer);
-    statusTimer = setTimeout(() => { el.textContent = ''; }, 1500);
+    statusTimer = setTimeout(() => { el.textContent = ''; }, 2000);
   }
 
-  function formatWeekLabel(mondayIso) {
-    const monday = new Date(mondayIso + 'T00:00:00');
-    const sundayIso = addDaysISO(mondayIso, 6);
-    const sunday = new Date(sundayIso + 'T00:00:00');
-    const sameMonth = monday.getMonth() === sunday.getMonth();
-    const start = `${monday.getDate()} ${MONTHS[monday.getMonth()]}`;
-    const end = sameMonth ? `${sunday.getDate()} ${MONTHS[sunday.getMonth()]}` : `${sunday.getDate()} ${MONTHS[sunday.getMonth()]}`;
-    return `${start} – ${end}`;
+  /* ---------- Catálogo ---------- */
+  function norm(s) {
+    return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  }
+  function sortedMeals() {
+    return state.meals.slice().sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+  }
+  function findMeal(text) {
+    const n = norm(text);
+    return state.meals.find(m => norm(m) === n);
   }
 
-  function dayDateLabel(dayIndex) {
-    const iso = addDaysISO(currentWeekStart, dayIndex);
-    const d = new Date(iso + 'T00:00:00');
-    return `${DAYS[dayIndex]} ${d.getDate()}`;
+  // Guarda lo escrito en una casilla. Si la comida no existe en el catálogo, se añade (catálogo acumulativo).
+  function commitSlot(day, slot, raw) {
+    let text = raw.trim().replace(/\s+/g, ' ');
+    let catalogChanged = false;
+    if (text) {
+      const existing = findMeal(text);
+      if (existing) text = existing;
+      else { state.meals.push(text); catalogChanged = true; }
+    }
+    const a = currentAssignments();
+    const changed = a[day][slot] !== text;
+    a[day][slot] = text;
+    if (changed || catalogChanged) {
+      renderWeekTable();
+      renderMealList();
+      saveState(catalogChanged ? 'Comida añadida a la lista' : 'Guardado');
+    }
+    return text;
   }
 
+  function addMealFromTab() {
+    const input = document.getElementById('newMealInput');
+    const val = input.value.trim().replace(/\s+/g, ' ');
+    if (!val) return;
+    if (findMeal(val)) { showStatus('Ya está en la lista', false); return; }
+    state.meals.push(val);
+    input.value = '';
+    renderMealList();
+    saveState('Añadida');
+  }
+
+  function renameMeal(oldName, newRaw) {
+    const newName = newRaw.trim().replace(/\s+/g, ' ');
+    if (!newName || newName === oldName) { editingMeal = null; renderMealList(); return; }
+    const clash = findMeal(newName);
+    if (clash && clash !== oldName) { showStatus('Ya existe una comida con ese nombre', false); return; }
+    const idx = state.meals.indexOf(oldName);
+    if (idx === -1) { editingMeal = null; renderMealList(); return; }
+    state.meals[idx] = newName;
+    Object.keys(state.weeks).forEach(w => {
+      DAYS.forEach(d => SLOTS.forEach(s => {
+        if (state.weeks[w][d] && state.weeks[w][d][s] === oldName) state.weeks[w][d][s] = newName;
+      }));
+    });
+    editingMeal = null;
+    renderAll();
+    saveState('Comida modificada');
+  }
+
+  function removeMeal(name) {
+    if (!confirm(`¿Quitar "${name}" de la lista? Las semanas ya planificadas no se modifican.`)) return;
+    state.meals = state.meals.filter(m => m !== name);
+    renderMealList();
+    saveState('Quitada de la lista');
+  }
+
+  /* ---------- Render ---------- */
   function renderWeekLabel() {
     document.getElementById('weekLabel').textContent = formatWeekLabel(currentWeekStart);
   }
 
-  function renderMealList() {
-    const container = document.getElementById('mealItems');
-    container.innerHTML = '';
-    if (state.meals.length === 0) {
-      container.innerHTML = '<div class="empty-note">Sin comidas todavía. Añade alguna abajo.</div>';
-      return;
+  function buildSlot(day, slot) {
+    const wrap = document.createElement('div');
+    wrap.className = 'slot-input-wrap';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'slot-input';
+    input.placeholder = '—';
+    input.autocomplete = 'off';
+    input.setAttribute('autocapitalize', 'sentences');
+    input.value = currentAssignments()[day][slot] || '';
+
+    const clear = document.createElement('button');
+    clear.type = 'button';
+    clear.className = 'slot-clear';
+    clear.textContent = '×';
+    clear.title = 'Borrar';
+
+    const dd = document.createElement('div');
+    dd.className = 'suggest';
+
+    let items = [];
+    let active = -1;
+
+    function updateClear() { clear.style.display = input.value ? '' : 'none'; }
+
+    function highlight() {
+      Array.from(dd.children).forEach((el, i) => el.classList.toggle('active', i === active));
+      const el = dd.children[active];
+      if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
     }
-    state.meals.forEach((meal, idx) => {
-      const row = document.createElement('div');
-      row.className = 'meal-item';
-      const span = document.createElement('span');
-      span.textContent = meal;
-      const btn = document.createElement('button');
-      btn.textContent = 'Quitar';
-      btn.onclick = () => removeMeal(idx);
-      row.appendChild(span);
-      row.appendChild(btn);
-      container.appendChild(row);
+
+    function refresh() {
+      const q = norm(input.value);
+      let list = sortedMeals();
+      if (q) {
+        const starts = list.filter(m => norm(m).startsWith(q));
+        const contains = list.filter(m => !norm(m).startsWith(q) && norm(m).includes(q));
+        list = starts.concat(contains);
+      }
+      items = list.slice(0, 30);
+      active = -1;
+      dd.innerHTML = '';
+      if (!items.length) { dd.style.display = 'none'; return; }
+      items.forEach(m => {
+        const o = document.createElement('div');
+        o.className = 'suggest-item';
+        o.textContent = m;
+        o.addEventListener('mousedown', (e) => { e.preventDefault(); pick(m); });
+        dd.appendChild(o);
+      });
+      dd.style.display = 'block';
+    }
+
+    function commit() {
+      input.value = commitSlot(day, slot, input.value);
+      updateClear();
+    }
+    function pick(m) {
+      input.value = m;
+      dd.style.display = 'none';
+      commit();
+      input.blur();
+    }
+
+    input.addEventListener('focus', refresh);
+    input.addEventListener('input', () => { refresh(); updateClear(); });
+    input.addEventListener('blur', () => { dd.style.display = 'none'; commit(); });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (dd.style.display === 'none') refresh();
+        active = Math.min(items.length - 1, active + 1); highlight();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        active = Math.max(0, active - 1); highlight();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (active >= 0 && items[active]) pick(items[active]); else input.blur();
+      } else if (e.key === 'Escape') {
+        input.value = currentAssignments()[day][slot] || '';
+        input.blur();
+      }
     });
+    clear.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      input.value = '';
+      commit();
+      dd.style.display = 'none';
+    });
+
+    updateClear();
+    wrap.appendChild(input);
+    wrap.appendChild(clear);
+    wrap.appendChild(dd);
+    return wrap;
   }
 
   function renderWeekGrid() {
-    const assignments = currentAssignments();
     const grid = document.getElementById('weekGrid');
     grid.innerHTML = '';
     DAYS.forEach((day, dayIdx) => {
@@ -465,37 +482,21 @@
       SLOTS.forEach(slot => {
         const row = document.createElement('div');
         row.className = 'slot-row';
-
         const label = document.createElement('div');
         label.className = 'slot-label';
         label.textContent = slot;
-
-        const select = document.createElement('select');
-        select.className = 'slot-select';
-        const noneOpt = document.createElement('option');
-        noneOpt.value = '';
-        noneOpt.textContent = '—';
-        select.appendChild(noneOpt);
-        state.meals.forEach(meal => {
-          const opt = document.createElement('option');
-          opt.value = meal;
-          opt.textContent = meal;
-          if (assignments[day][slot] === meal) opt.selected = true;
-          select.appendChild(opt);
-        });
-        select.onchange = () => {
-          assignments[day][slot] = select.value;
-          renderWeekTable();
-          saveState('Guardado');
-        };
-
         row.appendChild(label);
-        row.appendChild(select);
+        row.appendChild(buildSlot(day, slot));
         card.appendChild(row);
       });
-
       grid.appendChild(card);
     });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
   }
 
   function renderWeekTable() {
@@ -503,8 +504,7 @@
     const table = document.getElementById('weekTable');
     let html = '<tr><th>Comida</th>';
     DAYS.forEach((day, idx) => {
-      const iso = addDaysISO(currentWeekStart, idx);
-      const d = new Date(iso + 'T00:00:00');
+      const d = new Date(addDaysISO(currentWeekStart, idx) + 'T00:00:00');
       html += `<th>${day.slice(0,3)} ${d.getDate()}</th>`;
     });
     html += '</tr>';
@@ -512,21 +512,62 @@
       html += `<tr><td>${slot}</td>`;
       DAYS.forEach(day => {
         const val = assignments[day][slot];
-        if (val) {
-          html += `<td>${escapeHtml(val)}</td>`;
-        } else {
-          html += `<td class="empty-cell">—</td>`;
-        }
+        html += val ? `<td>${escapeHtml(val)}</td>` : `<td class="empty-cell">—</td>`;
       });
       html += '</tr>';
     });
     table.innerHTML = html;
   }
 
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
+  function renderMealList() {
+    const container = document.getElementById('mealItems');
+    container.innerHTML = '';
+    if (state.meals.length === 0) {
+      container.innerHTML = '<div class="empty-note">Sin comidas todavía. Añade alguna arriba o escríbela directamente en un día.</div>';
+      return;
+    }
+    sortedMeals().forEach(meal => {
+      const row = document.createElement('div');
+      row.className = 'meal-item';
+      if (editingMeal === meal) {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = meal;
+        const save = document.createElement('button');
+        save.className = 'link-btn';
+        save.textContent = 'Guardar';
+        save.onclick = () => renameMeal(meal, input.value);
+        const cancel = document.createElement('button');
+        cancel.className = 'link-btn danger';
+        cancel.textContent = 'Cancelar';
+        cancel.onclick = () => { editingMeal = null; renderMealList(); };
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') renameMeal(meal, input.value);
+          if (e.key === 'Escape') { editingMeal = null; renderMealList(); }
+        });
+        row.appendChild(input);
+        row.appendChild(save);
+        row.appendChild(cancel);
+        container.appendChild(row);
+        setTimeout(() => input.focus(), 0);
+      } else {
+        const span = document.createElement('span');
+        span.className = 'meal-name';
+        span.textContent = meal;
+        const edit = document.createElement('button');
+        edit.className = 'link-btn';
+        edit.textContent = 'Editar';
+        edit.onclick = () => { editingMeal = meal; renderMealList(); };
+        const del = document.createElement('button');
+        del.className = 'link-btn danger';
+        del.textContent = 'Quitar';
+        del.onclick = () => removeMeal(meal);
+        row.appendChild(span);
+        row.appendChild(edit);
+        row.appendChild(del);
+        container.appendChild(row);
+      }
+    });
   }
 
   function renderAll() {
@@ -536,58 +577,20 @@
     renderWeekTable();
   }
 
-  document.getElementById('tabPlanBtn').onclick = () => switchTab('plan');
-  document.getElementById('tabViewBtn').onclick = () => switchTab('table');
-
-  function switchTab(which) {
-    const planBtn = document.getElementById('tabPlanBtn');
-    const viewBtn = document.getElementById('tabViewBtn');
-    const planView = document.getElementById('viewPlan');
-    const tableView = document.getElementById('viewTable');
-    if (which === 'plan') {
-      planBtn.classList.add('active');
-      viewBtn.classList.remove('active');
-      planView.style.display = '';
-      tableView.style.display = 'none';
-    } else {
-      planBtn.classList.remove('active');
-      viewBtn.classList.add('active');
-      planView.style.display = 'none';
-      tableView.style.display = '';
-      renderWeekTable();
-    }
-  }
-
-  function addMeal() {
-    const input = document.getElementById('newMealInput');
-    const val = input.value.trim();
-    if (!val) return;
-    if (state.meals.includes(val)) {
-      showStatus('Ya está en la lista', false);
-      return;
-    }
-    state.meals.push(val);
-    input.value = '';
-    renderAll();
-    saveState('Añadido');
-  }
-
-  function removeMeal(idx) {
-    const meal = state.meals[idx];
-    state.meals.splice(idx, 1);
-    // Quita la comida de todas las semanas guardadas, no solo la actual.
-    Object.keys(state.weeks).forEach(weekIso => {
-      DAYS.forEach(day => {
-        SLOTS.forEach(slot => {
-          if (state.weeks[weekIso][day][slot] === meal) state.weeks[weekIso][day][slot] = '';
-        });
-      });
+  /* ---------- Pestañas y navegación ---------- */
+  function setTab(which) {
+    const views = { plan: 'viewPlan', table: 'viewTable', meals: 'viewMeals' };
+    const btns = { plan: 'tabPlanBtn', table: 'tabViewBtn', meals: 'tabMealsBtn' };
+    Object.keys(views).forEach(k => {
+      document.getElementById(views[k]).style.display = (k === which) ? '' : 'none';
+      document.getElementById(btns[k]).classList.toggle('active', k === which);
     });
-    renderAll();
-    saveState('Quitado');
+    document.getElementById('weekNav').style.display = (which === 'meals') ? 'none' : '';
+    if (which === 'table') renderWeekTable();
   }
 
   function resetWeek() {
+    if (!confirm('¿Vaciar todas las comidas de esta semana? La lista de comidas no se modifica.')) return;
     state.weeks[currentWeekStart] = emptyAssignments();
     renderAll();
     saveState('Semana vaciada');
@@ -597,16 +600,18 @@
     currentWeekStart = addDaysISO(currentWeekStart, offsetDays);
     ensureWeek(currentWeekStart);
     renderAll();
-    saveState();
   }
 
-  document.getElementById('addMealBtn').onclick = addMeal;
-  document.getElementById('newMealInput').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') addMeal();
-  });
-  document.getElementById('resetBtn').onclick = resetWeek;
+  document.getElementById('tabPlanBtn').onclick = () => setTab('plan');
+  document.getElementById('tabViewBtn').onclick = () => setTab('table');
+  document.getElementById('tabMealsBtn').onclick = () => setTab('meals');
   document.getElementById('prevWeekBtn').onclick = () => goToWeek(-7);
   document.getElementById('nextWeekBtn').onclick = () => goToWeek(7);
+  document.getElementById('resetBtn').onclick = resetWeek;
+  document.getElementById('addMealBtn').onclick = addMealFromTab;
+  document.getElementById('newMealInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addMealFromTab();
+  });
   document.getElementById('printBtn').onclick = () => {
     renderWeekTable();
     window.print();
@@ -617,6 +622,5 @@
     renderAll();
   })();
 </script>
-
 </body>
 </html>
